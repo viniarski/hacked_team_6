@@ -26,7 +26,7 @@ export default function SignUpPage() {
             <div className="bg-[#5c8f57] bg-opacity-20 p-2 rounded-full mr-2">
               <Leaf className="h-5 w-5 text-[#5c8f57]" />
             </div>
-            <span className="text-xl font-bold text-gray-800">PlantPal</span>
+            <span className="text-xl font-bold text-gray-800">Flaura</span>
           </div>
 
           <div className="max-w-md mx-auto md:mx-0 w-full flex-1 flex flex-col justify-center">

@@ -2,7 +2,7 @@ import './globals.css';
 import { ClerkProvider } from '@clerk/nextjs';
 
 export const metadata = {
-  title: 'PlantPal',
+  title: 'Flaura',
   description: 'Keep track of your plants health and status',
 };
 

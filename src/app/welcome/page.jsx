@@ -51,7 +51,7 @@ export default function WelcomePage() {
           <div className="bg-[#5c8f57] bg-opacity-20 p-2 rounded-full">
             <Leaf className="h-6 w-6 text-[#5c8f57]" />
           </div>
-          <span className="text-xl font-bold text-gray-800">PlantPal</span>
+          <span className="text-xl font-bold text-gray-800">Flaura</span>
         </div>
 
         <Link
@@ -175,7 +175,7 @@ export default function WelcomePage() {
             </h2>
             <p className="text-[#a8b3a6] md:max-w-xl">
               Join thousands of plant enthusiasts who are keeping their plants
-              thriving with PlantPal.
+              thriving with Flaura.
             </p>
           </div>
           <div className="md:w-1/3 md:text-right">
@@ -197,7 +197,7 @@ export default function WelcomePage() {
               <div className="bg-[#5c8f57] bg-opacity-20 p-2 rounded-full">
                 <Leaf className="h-5 w-5 text-[#5c8f57]" />
               </div>
-              <span className="text-lg font-bold text-gray-800">PlantPal</span>
+              <span className="text-lg font-bold text-gray-800">Flaura</span>
             </div>
 
             <div className="flex gap-8">
@@ -217,7 +217,7 @@ export default function WelcomePage() {
           </div>
 
           <div className="mt-8 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} PlantPal. All rights reserved.
+            &copy; {new Date().getFullYear()} Flaura. All rights reserved.
           </div>
         </div>
       </footer>

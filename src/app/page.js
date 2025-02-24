@@ -1,8 +1,8 @@
-// src/app/page.jsx
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Leaf,
   ChevronRight,
@@ -51,10 +51,13 @@ export default function WelcomePage() {
       {/* Navigation */}
       <nav className="pt-6 px-6 md:px-12 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <div className="bg-[#5c8f57] bg-opacity-20 p-2 rounded-full">
-            <Leaf className="h-6 w-6 text-[#5c8f57]" />
-          </div>
-          <span className="text-xl font-bold text-gray-800">PlantPal</span>
+          <Image
+            src="/logo_flaura.webp"
+            alt="Flaura Logo"
+            width={150}
+            height={80}
+            className="h-40 w-auto"
+          />
         </div>
 
         {isLoaded && userId ? (
@@ -117,7 +120,7 @@ export default function WelcomePage() {
               <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-[#d4b16f]/10 rounded-full"></div>
 
               <div className="relative w-full max-w-md h-80 bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-                <div className="absolute inset-0 bg-[url('/images/plant-dashboard-preview.jpg')] bg-cover bg-center opacity-90"></div>
+                <div className="absolute inset-0 bg-[#2c392f] opacity-90"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 right-4 p-4 bg-white/90 backdrop-blur-sm rounded-lg">
                   <div className="flex items-center gap-3">
@@ -187,7 +190,7 @@ export default function WelcomePage() {
             </h2>
             <p className="text-[#a8b3a6] md:max-w-xl">
               Join thousands of plant enthusiasts who are keeping their plants
-              thriving with PlantPal.
+              thriving with our platform.
             </p>
           </div>
           <div className="md:w-1/3 md:text-right">
@@ -206,10 +209,13 @@ export default function WelcomePage() {
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-2 mb-6 md:mb-0">
-              <div className="bg-[#5c8f57] bg-opacity-20 p-2 rounded-full">
-                <Leaf className="h-5 w-5 text-[#5c8f57]" />
-              </div>
-              <span className="text-lg font-bold text-gray-800">PlantPal</span>
+              <Image
+                src="/logo_flaura.webp"
+                alt="Flaura Logo"
+                width={120}
+                height={60}
+                className="h-16 w-auto"
+              />
             </div>
 
             <div className="flex gap-8">
@@ -229,7 +235,7 @@ export default function WelcomePage() {
           </div>
 
           <div className="mt-8 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} PlantPal. All rights reserved.
+            &copy; {new Date().getFullYear()} Flaura. All rights reserved.
           </div>
         </div>
       </footer>

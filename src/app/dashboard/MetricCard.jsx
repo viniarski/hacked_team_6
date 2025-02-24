@@ -11,7 +11,6 @@ export const MetricCard = ({
   color,
   optimal,
   warning,
-  critical,
   gradient,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
