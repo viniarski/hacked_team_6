@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import {
   Thermometer,
   Droplets,
@@ -78,10 +79,31 @@ export default function DashboardPage({ params }) {
   const router = useRouter();
   const { isLoaded, userId } = useAuth();
 
-  // If not authenticated, redirect to sign in
+  // Use useEffect for navigation after render
+  useEffect(() => {
+    if (isLoaded && !userId) {
+      router.push('/signin');
+    }
+  }, [isLoaded, userId, router]);
+
+  // If still loading auth state, show nothing or a loading indicator
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-[#f8faf9] flex items-center justify-center">
+        <Image
+          src="/logo_flaura.webp"
+          alt="Flaura Logo"
+          width={150}
+          height={40}
+          className="h-10 w-auto animate-pulse"
+        />
+      </div>
+    );
+  }
+
+  // If no user and auth is loaded, don't render the main content
   if (isLoaded && !userId) {
-    router.push('/signin');
-    return null;
+    return null; // We'll redirect in the useEffect above
   }
 
   // Properly unwrap params with React.use()
@@ -181,6 +203,17 @@ export default function DashboardPage({ params }) {
                 },
               },
             }}
+          />
+        </div>
+
+        {/* Logo */}
+        <div className="mb-6">
+          <Image
+            src="/logo_flaura.webp"
+            alt="Flaura Logo"
+            width={150}
+            height={40}
+            className="h-8 w-auto"
           />
         </div>
 

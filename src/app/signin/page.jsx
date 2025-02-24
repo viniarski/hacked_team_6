@@ -1,8 +1,7 @@
-// src/app/signin/page.jsx (no need for catch-all route)
 'use client';
 
 import Link from 'next/link';
-import { Leaf, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { SignIn } from '@clerk/nextjs';
 
 export default function SignInPage() {
@@ -11,7 +10,8 @@ export default function SignInPage() {
       <div className="flex-1 flex flex-col md:flex-row">
         {/* Left side - Form */}
         <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col">
-          <div className="mb-8">
+          {/* Back to home link - Stays at the top left */}
+          <div className="self-start mb-8">
             <Link
               href="/"
               className="inline-flex items-center text-gray-600 hover:text-gray-900"
@@ -21,49 +21,43 @@ export default function SignInPage() {
             </Link>
           </div>
 
-          <div className="flex items-center mb-8">
-            <div className="bg-[#5c8f57] bg-opacity-20 p-2 rounded-full mr-2">
-              <Leaf className="h-5 w-5 text-[#5c8f57]" />
-            </div>
-            <span className="text-xl font-bold text-gray-800">PlantPal</span>
-          </div>
+          {/* Centered Sign-In Section */}
+          <div className="flex flex-grow justify-center items-center">
+            <div className="max-w-md w-full text-center">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                Welcome
+              </h1>
+              <p className="text-gray-600 mb-8">
+                Sign in to access your plant dashboard.
+              </p>
 
-          <div className="max-w-md mx-auto md:mx-0 w-full flex-1 flex flex-col justify-center">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-              Welcome back
-            </h1>
-            <p className="text-gray-600 mb-8">
-              Sign in to access your plant dashboard.
-            </p>
-
-            <div className="auth-container">
-              <SignIn
-                routing="hash"
-                forceRedirectUrl="/spaces"
-                appearance={{
-                  elements: {
-                    formButtonPrimary: 'bg-[#5c8f57] hover:bg-[#4d7a49]',
-                    card: 'shadow-none',
-                    footer: 'hidden',
-                  },
-                }}
-              />
+              <div className="auth-container w-full flex justify-center">
+                <SignIn
+                  routing="hash"
+                  forceRedirectUrl="/spaces"
+                  appearance={{
+                    elements: {
+                      formButtonPrimary: 'bg-[#5c8f57] hover:bg-[#4d7a49]',
+                      card: 'shadow-none',
+                      footer: 'hidden',
+                    },
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
 
         {/* Right side - Image */}
-        <div className="hidden md:block md:w-1/2 bg-[#2c392f] relative">
-          <div className="absolute inset-0 flex items-center justify-center p-12">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 max-w-md">
-              <h2 className="text-2xl font-bold text-white mb-4">
-                Monitor your plant's health in real-time
-              </h2>
-              <p className="text-gray-200">
-                Get insights into your plants' needs and create the perfect
-                environment for them to thrive.
-              </p>
-            </div>
+        <div className="hidden md:flex md:w-1/2 bg-[#2c392f] items-center justify-center p-12">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 max-w-md">
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Monitor your plant's health in real-time
+            </h2>
+            <p className="text-gray-200">
+              Get insights into your plants' needs and create the perfect
+              environment for them to thrive.
+            </p>
           </div>
         </div>
       </div>
