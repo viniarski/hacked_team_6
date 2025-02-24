@@ -7,8 +7,20 @@ CREATE TABLE pi_data (
     brightness INT
 );
 
-CREATE TABLE hacked_user (
+CREATE TABLE pi_users (
+    clerk_id TEXT PRIMARY KEY
+);
+
+CREATE TABLE pi_spaces (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    spaces JSONB, 
-    plants JSONB,
+    tag VARCHAR(25),
+    plant_id INT REFERENCES plants(id),
+    user_id INT REFERENCES users(clerk_id)
+);
+
+CREATE TABLE pi_plants (
+    id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    tag VARCHAR(25),
+    space_id INT REFERENCES spaces(id),
+    watered TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
