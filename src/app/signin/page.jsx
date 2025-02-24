@@ -1,7 +1,6 @@
-// src/app/signin/page.jsx
+// src/app/signin/page.jsx (no need for catch-all route)
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { Leaf, ArrowLeft } from 'lucide-react';
 import { SignIn } from '@clerk/nextjs';
@@ -39,9 +38,8 @@ export default function SignInPage() {
 
             <div className="auth-container">
               <SignIn
-                routing="path"
-                path="/signin"
-                redirectUrl="/spaces"
+                routing="hash"
+                forceRedirectUrl="/spaces"
                 appearance={{
                   elements: {
                     formButtonPrimary: 'bg-[#5c8f57] hover:bg-[#4d7a49]',
@@ -56,7 +54,6 @@ export default function SignInPage() {
 
         {/* Right side - Image */}
         <div className="hidden md:block md:w-1/2 bg-[#2c392f] relative">
-          <div className="absolute inset-0 bg-[url('/images/plants-signin-bg.jpg')] bg-cover bg-center opacity-40"></div>
           <div className="absolute inset-0 flex items-center justify-center p-12">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-8 max-w-md">
               <h2 className="text-2xl font-bold text-white mb-4">
