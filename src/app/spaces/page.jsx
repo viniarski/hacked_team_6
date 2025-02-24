@@ -1,35 +1,52 @@
-'use client';
+// src/app/spaces/page.jsx
+"use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Utensils, Home, Droplets, Plus, Leaf } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth, UserButton } from '@clerk/nextjs';
 
-const KitchenIcon = () => <Utensils className="h-10 w-10" />;
+const KitchenIcon = () => (
+  <Utensils className="h-10 w-10" />
+);
 
-const BedroomIcon = () => <Home className="h-10 w-10" />;
+const BedroomIcon = () => (
+  <Home className="h-10 w-10" />
+);
 
-const BathroomIcon = () => <Droplets className="h-10 w-10" />;
+const BathroomIcon = () => (
+  <Droplets className="h-10 w-10" />
+);
 
 export default function SpacesPage() {
   const router = useRouter();
   const { isLoaded, userId } = useAuth();
-
-  // If not authenticated, redirect to sign in
-  if (isLoaded && !userId) {
-    router.push('/signin');
-    return null;
-  }
-
   const [boards, setBoards] = useState([
     { id: 1, name: 'Kitchen', icon: KitchenIcon, color: '#5c8f57' },
     { id: 2, name: 'Bedroom', icon: BedroomIcon, color: '#d4846f' },
     { id: 3, name: 'Bathroom', icon: BathroomIcon, color: '#d4b16f' },
   ]);
-
   const [showAddForm, setShowAddForm] = useState(false);
   const [newBoardName, setNewBoardName] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
+
+  // Use useEffect for navigation after render
+  useEffect(() => {
+    if (isLoaded && !userId) {
+      router.push('/signin');
+    }
+  }, [isLoaded, userId, router]);
+
+  // If still loading auth state, show nothing or a loading indicator
+  if (!isLoaded) {
+    return <div className="min-h-screen bg-[#f8faf9] flex items-center justify-center">Loading...</div>;
+  }
+
+  // If no user and auth is loaded, don't render the main content
+  if (isLoaded && !userId) {
+    return null; // We'll redirect in the useEffect above
+  }
 
   const addNewBoard = () => {
     if (newBoardName.trim()) {
@@ -37,7 +54,7 @@ export default function SpacesPage() {
         id: boards.length + 1,
         name: newBoardName,
         icon: () => <Leaf className="h-10 w-10" />,
-        color: '#5c8f57',
+        color: '#5c8f57'
       };
       setBoards([...boards, newBoard]);
       setNewBoardName('');
@@ -50,25 +67,21 @@ export default function SpacesPage() {
       <div className="max-w-7xl mx-auto">
         <header className="flex justify-between items-center mb-12">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">
-              My Plant Spaces
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Select a space to view your plants
-            </p>
+            <h1 className="text-3xl font-bold text-gray-800">My Plant Spaces</h1>
+            <p className="text-gray-600 mt-2">Select a space to view your plants</p>
           </div>
-
+          
           <div className="flex items-center gap-4">
-            <UserButton
+            <UserButton 
               afterSignOutUrl="/"
               appearance={{
                 elements: {
                   userButtonAvatarBox: {
                     width: '2.5rem',
-                    height: '2.5rem',
-                  },
-                },
-              }}
+                    height: '2.5rem'
+                  }
+                }
+              }} 
             />
           </div>
         </header>
@@ -80,7 +93,7 @@ export default function SpacesPage() {
               key={board.id}
               className="flex flex-col items-center bg-white rounded-xl shadow-sm border border-gray-200 p-6 transition-transform hover:-translate-y-1 cursor-pointer"
             >
-              <div
+              <div 
                 className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
                 style={{ backgroundColor: `${board.color}20` }}
               >
@@ -88,15 +101,13 @@ export default function SpacesPage() {
                   <board.icon />
                 </div>
               </div>
-              <h2 className="text-xl font-medium text-gray-800">
-                {board.name}
-              </h2>
+              <h2 className="text-xl font-medium text-gray-800">{board.name}</h2>
               <span className="mt-2 text-sm text-gray-500">4 plants</span>
             </Link>
           ))}
 
           {/* Add New Board Button */}
-          <div
+          <div 
             onClick={() => setShowAddForm(true)}
             className="flex flex-col items-center justify-center bg-white rounded-xl shadow-sm border border-gray-200 border-dashed p-6 cursor-pointer hover:bg-gray-50"
           >

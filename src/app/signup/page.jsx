@@ -41,7 +41,7 @@ export default function SignUpPage() {
               <SignUp
                 routing="path"
                 path="/signup"
-                redirectUrl="/spaces"
+                fallbackRedirectUrl="/spaces"
                 appearance={{
                   elements: {
                     formButtonPrimary: 'bg-[#5c8f57] hover:bg-[#4d7a49]',
