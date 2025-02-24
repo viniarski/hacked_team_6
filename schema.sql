@@ -14,13 +14,18 @@ CREATE TABLE pi_users (
 CREATE TABLE pi_spaces (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     tag VARCHAR(25),
-    plant_id INT REFERENCES plants(id),
-    user_id INT REFERENCES users(clerk_id)
+    plant_id INT,
+    user_id TEXT REFERENCES pi_users(clerk_id)
 );
 
 CREATE TABLE pi_plants (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     tag VARCHAR(25),
-    space_id INT REFERENCES spaces(id),
+    space_id INT REFERENCES pi_spaces(id),
     watered TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE pi_spaces
+ADD CONSTRAINT fk_plant
+FOREIGN KEY (plant_id)
+REFERENCES pi_plants(id);
