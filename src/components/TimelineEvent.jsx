@@ -1,13 +1,19 @@
 // src/components/TimelineEvent.jsx
-"use client";
+'use client';
 
-export const TimelineEvent = ({ time, metric, previousValue, currentValue, unit }) => {
+export const TimelineEvent = ({
+  time,
+  metric,
+  previousValue,
+  currentValue,
+  unit,
+}) => {
   const getDelta = () => {
     const delta = currentValue - previousValue;
     return {
       value: Math.abs(delta).toFixed(1),
       increased: delta > 0,
-      color: delta > 0 ? 'text-[#d4846f]' : 'text-[#7fa37a]'
+      color: delta > 0 ? 'text-[#d4846f]' : 'text-[#7fa37a]',
     };
   };
 
@@ -21,7 +27,8 @@ export const TimelineEvent = ({ time, metric, previousValue, currentValue, unit 
       </div>
       <div className="flex items-center gap-2">
         <span className={delta.color}>
-          {delta.increased ? '↑' : '↓'} {delta.value}{unit}
+          {delta.increased ? '↑' : '↓'} {delta.value}
+          {unit}
         </span>
       </div>
     </div>

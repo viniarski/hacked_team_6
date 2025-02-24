@@ -1,6 +1,6 @@
-// src/app/dashboard/PlantDashboard.jsx
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import {
   Thermometer,
@@ -10,11 +10,16 @@ import {
   ChevronDown,
   Clock,
   Calendar,
+  ArrowLeft,
 } from 'lucide-react';
+import Link from 'next/link';
+import { use } from 'react';
+import { useAuth, UserButton } from '@clerk/nextjs';
 import { MetricCard } from '@/app/dashboard/MetricCard';
 import { StatusOverview } from '@/app/dashboard/StatusOverview';
-import { TimelineEvent } from '@/app/dashboard/TimelineEvent';
+import { TimelineEvent } from '@/components/TimelineEvent';
 
+// TimeDisplay component
 const TimeDisplay = () => {
   const [time, setTime] = useState('');
 
@@ -29,24 +34,18 @@ const TimeDisplay = () => {
   return <span>{time}</span>;
 };
 
-const PlantSelector = ({ selectedPlant, onSelect }) => {
+// PlantSelector component
+const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const plants = [
-    { id: 1, name: 'Monstera Deliciosa', type: 'Tropical' },
-    { id: 2, name: 'Snake Plant', type: 'Succulent' },
-    { id: 3, name: 'Fiddle Leaf Fig', type: 'Indoor Tree' },
-    { id: 4, name: 'Peace Lily', type: 'Flowering' },
-  ];
-
   return (
-    <div className="relative">
+    <div className="relative z-20">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[#2c392f]/40 hover:bg-[#2c392f]/60 transition-colors border border-[#4a5d4e] text-[#e2e8df]"
+        className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[#2c392f] hover:bg-[#364940] transition-colors border border-[#4a5d4e] text-[#e2e8df]"
       >
         <Leaf className="h-5 w-5 text-[#7fa37a]" />
-        <span>{selectedPlant.name}</span>
+        <span>{selectedPlant?.name}</span>
         <ChevronDown
           className={`h-4 w-4 transition-transform ${
             isOpen ? 'rotate-180' : ''
@@ -55,7 +54,7 @@ const PlantSelector = ({ selectedPlant, onSelect }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-64 py-2 rounded-xl bg-[#2c392f]/90 backdrop-blur-lg border border-[#4a5d4e] shadow-xl z-10">
+        <div className="absolute top-full right-0 mt-2 w-64 py-2 rounded-xl bg-[#2c392f] border border-[#4a5d4e] shadow-xl z-30">
           {plants.map((plant) => (
             <button
               key={plant.id}
@@ -63,7 +62,7 @@ const PlantSelector = ({ selectedPlant, onSelect }) => {
                 onSelect(plant);
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-2 text-left hover:bg-[#4a5d4e] transition-colors flex flex-col"
+              className="w-full px-4 py-2 text-left hover:bg-[#364940] transition-colors flex flex-col"
             >
               <span className="text-[#e2e8df]">{plant.name}</span>
               <span className="text-sm text-[#7fa37a]">{plant.type}</span>
@@ -75,12 +74,47 @@ const PlantSelector = ({ selectedPlant, onSelect }) => {
   );
 };
 
-const PlantDashboard = () => {
-  const [selectedPlant, setSelectedPlant] = useState({
-    id: 1,
-    name: 'Monstera Deliciosa',
-    type: 'Tropical',
-  });
+export default function DashboardPage({ params }) {
+  const router = useRouter();
+  const { isLoaded, userId } = useAuth();
+
+  // If not authenticated, redirect to sign in
+  if (isLoaded && !userId) {
+    router.push('/signin');
+    return null;
+  }
+
+  // Properly unwrap params with React.use()
+  const unwrappedParams = use(params);
+  const { spaceId, plantId } = unwrappedParams;
+
+  // Mock spaces data
+  const spaces = {
+    1: { name: 'Kitchen', color: '#5c8f57' },
+    2: { name: 'Bedroom', color: '#d4846f' },
+    3: { name: 'Bathroom', color: '#d4b16f' },
+  };
+
+  // Mock plants data
+  const plantsData = [
+    { id: 1, name: 'Monstera Deliciosa', type: 'Tropical' },
+    { id: 2, name: 'Snake Plant', type: 'Succulent' },
+    { id: 3, name: 'Peace Lily', type: 'Flowering' },
+    { id: 4, name: 'Fiddle Leaf Fig', type: 'Indoor Tree' },
+  ];
+
+  const [selectedPlant, setSelectedPlant] = useState(
+    plantsData.find((p) => p.id.toString() === plantId.toString()) ||
+      plantsData[0]
+  );
+
+  // Change route when plant changes
+  const handlePlantChange = (plant) => {
+    setSelectedPlant(plant);
+    router.push(`/dashboard/${spaceId}/${plant.id}`);
+  };
+
+  const currentSpace = spaces[spaceId];
 
   const metrics = [
     {
@@ -125,18 +159,41 @@ const PlantDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#1a231c] bg-gradient-to-b from-[#1a231c] via-[#243028] to-[#1a231c] p-6">
+    <div className="min-h-screen bg-[#f8faf9] p-6">
       <div className="mx-auto max-w-7xl">
-        {/* Redesigned Header */}
-        <div className="rounded-2xl border border-[#4a5d4e] backdrop-blur-lg bg-[#2c392f]/40 p-6 mb-8">
+        {/* Navigation and user button */}
+        <div className="flex justify-between items-center mb-6">
+          <Link
+            href={`/plants/${spaceId}`}
+            className="flex items-center text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="h-5 w-5 mr-1" />
+            Back to {currentSpace.name} Plants
+          </Link>
+
+          <UserButton
+            afterSignOutUrl="/"
+            appearance={{
+              elements: {
+                userButtonAvatarBox: {
+                  width: '2.5rem',
+                  height: '2.5rem',
+                },
+              },
+            }}
+          />
+        </div>
+
+        {/* Header with solid background */}
+        <div className="rounded-2xl border border-[#4a5d4e] bg-[#2c392f] p-6 mb-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex flex-row items-center gap-4">
-              <div className="bg-[#7fa37a] bg-opacity-20 p-3 rounded-full">
+              <div className="bg-[#7fa37a]/30 p-3 rounded-full">
                 <Leaf className="h-7 w-7 text-[#7fa37a]" />
               </div>
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-[#e2e8df]">
-                  Plant Health Monitor
+                  {selectedPlant?.name || 'Plant'} Monitor
                 </h1>
                 <div className="flex items-center gap-2 mt-1">
                   <Clock className="h-4 w-4 text-[#a8b3a6]" />
@@ -156,7 +213,8 @@ const PlantDashboard = () => {
               <StatusOverview metrics={metrics} />
               <PlantSelector
                 selectedPlant={selectedPlant}
-                onSelect={setSelectedPlant}
+                plants={plantsData}
+                onSelect={handlePlantChange}
               />
             </div>
           </div>
@@ -168,7 +226,7 @@ const PlantDashboard = () => {
           ))}
         </div>
 
-        <div className="backdrop-blur-lg bg-[#2c392f]/40 rounded-2xl border border-[#4a5d4e] p-6">
+        <div className="bg-[#2c392f] rounded-2xl border border-[#4a5d4e] p-6">
           <h2 className="text-lg font-semibold mb-6 text-[#e2e8df]">
             Recent Changes
           </h2>
@@ -188,6 +246,4 @@ const PlantDashboard = () => {
       </div>
     </div>
   );
-};
-
-export default PlantDashboard;
+}
