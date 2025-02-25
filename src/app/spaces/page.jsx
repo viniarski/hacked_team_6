@@ -23,33 +23,33 @@ export default function SpacesPage() {
   const [newBoardName, setNewBoardName] = useState("");
 
   // fetch spaces from db
-  useEffect(() => {
-    const fetchSpaces = async () => {
-      try {
-        const response = await fetch("/api/spaces");
-        // if (!response.ok) {
-        //   throw new Error("Failed to fetch spaces");
-        // }
-        const spaces = await response.json();
-        console.log(spaces);
-        if (!Array.isArray(spaces) || spaces.length === 0) {
-          console.warn("No spaces returned from API");
-          return;
-        }
-
-        setBoards(
-          spaces.map((space) => ({
-            id: space.id,
-            name: space.tag,
-            icon: () => <Leaf className="h-10 w-10" />,
-            color: "#5c8f57",
-          }))
-        );
-      } catch (error) {
-        console.error(error);
+  const fetchSpaces = async () => {
+    try {
+      const response = await fetch("/api/spaces");
+      // if (!response.ok) {
+      //   throw new Error("Failed to fetch spaces");
+      // }
+      const spaces = await response.json();
+      console.log(spaces);
+      if (!Array.isArray(spaces) || spaces.length === 0) {
+        console.warn("No spaces returned from API");
+        return;
       }
-    };
 
+      setBoards(
+        spaces.map((space) => ({
+          id: space.id,
+          name: space.tag,
+          icon: () => <Leaf className="h-10 w-10" />,
+          color: "#5c8f57",
+        }))
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
     fetchSpaces();
   }, []);
 
@@ -69,19 +69,7 @@ export default function SpacesPage() {
         return;
       }
 
-      const newSpace = await response.json();
-
-      // Update state with new space
-      setBoards(
-        spaces.map((space) => ({
-          id: space.id,
-          name: space.tag,
-          icon: Leaf,
-          color: "#5c8f57",
-        }))
-      );
-
-      setNewBoardName("");
+      fetchSpaces();
       setShowAddForm(false);
     } catch (error) {
       console.error("Error adding space:", error);
@@ -102,9 +90,9 @@ export default function SpacesPage() {
         <Image
           src="/logo_flaura.webp"
           alt="Flaura Logo"
-          width={150}
-          height={40}
-          className="h-10 w-auto animate-pulse"
+          width={88}
+          height={64}
+          className="h-16 w-auto animate-pulse"
         />
       </div>
     );
@@ -125,9 +113,9 @@ export default function SpacesPage() {
               <Image
                 src="/logo_flaura.webp"
                 alt="Flaura Logo"
-                width={150}
-                height={40}
-                className="h-10 w-auto"
+                width={88}
+                height={64}
+                className="h-16 w-auto"
               />
             </div>
             <h1 className="text-3xl font-bold text-gray-800">
