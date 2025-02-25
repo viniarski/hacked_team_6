@@ -27,9 +27,9 @@ export default function SpacesPage() {
     const fetchSpaces = async () => {
       try {
         const response = await fetch("/api/spaces");
-        if (!response.ok) {
-          throw new Error("Failed to fetch spaces");
-        }
+        // if (!response.ok) {
+        //   throw new Error("Failed to fetch spaces");
+        // }
         const spaces = await response.json();
 
         if (!Array.isArray(spaces) || spaces.length === 0) {
