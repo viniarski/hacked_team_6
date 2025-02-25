@@ -3,7 +3,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Leaf, ArrowLeft, Plus, Search, X, Loader2, Sun, Thermometer } from 'lucide-react';
+import {
+  Leaf,
+  ArrowLeft,
+  Plus,
+  Search,
+  X,
+  Loader2,
+  Sun,
+  Thermometer,
+} from 'lucide-react';
 import Link from 'next/link';
 import { use } from 'react';
 import { useAuth, UserButton } from '@clerk/nextjs';
@@ -17,7 +26,7 @@ export default function PlantsListPage({ params }) {
   // Properly unwrap params with React.use()
   const unwrappedParams = use(params);
   const spaceId = unwrappedParams?.id || 1;
-  
+
   // State variables
   const [spaces, setSpaces] = useState([]);
   const [plants, setPlants] = useState([]);
@@ -33,25 +42,26 @@ export default function PlantsListPage({ params }) {
   const searchTimeout = useRef(null);
 
   // Current space
-  const currentSpace = spaces.find(space => space.id === parseInt(spaceId)) || {};
+  const currentSpace =
+    spaces.find((space) => space.id === parseInt(spaceId)) || {};
 
   // Handle search input change
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    
+
     // Clear previous timeout
     if (searchTimeout.current) {
       clearTimeout(searchTimeout.current);
     }
-    
+
     // Don't search if query is empty
     if (!value.trim()) {
       setSearchResults([]);
       setShowResults(false);
       return;
     }
-    
+
     // Debounce search
     searchTimeout.current = setTimeout(() => {
       searchPlants(value);
@@ -61,17 +71,20 @@ export default function PlantsListPage({ params }) {
   // Search plants from API
   const searchPlants = async (query) => {
     if (!query.trim()) return;
-    
+
     setIsSearching(true);
     setShowResults(true);
-    
+
     try {
       // Use the API endpoint that tries real API first, then falls back to mock data
-      const response = await fetch(`/api/search-plants?query=${encodeURIComponent(query)}`, {
-        method: 'GET',
-        cache: 'no-store'
-      });
-      
+      const response = await fetch(
+        `/api/search-plants?query=${encodeURIComponent(query)}`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+        }
+      );
+
       if (response.ok) {
         const results = await response.json();
         console.log('Search results:', results);
@@ -92,8 +105,9 @@ export default function PlantsListPage({ params }) {
   // Select a plant from search results
   const handleSelectPlant = async (plant) => {
     setIsAddingPlant(true);
-    
+
     try {
+      console.log('Adding plant:', plant);
       // Add plant to space with just the essential fields for your schema
       const response = await fetch('/api/plants/add', {
         method: 'POST',
@@ -102,11 +116,12 @@ export default function PlantsListPage({ params }) {
         },
         body: JSON.stringify({
           apiId: plant.id,
-          spaceId: parseInt(spaceId)
+          spaceId: parseInt(spaceId),
         }),
       });
-      
+
       if (response.ok) {
+        console.log('Plant added successfully');
         // Clear search and refresh plants
         setSearchQuery('');
         setSearchResults([]);
@@ -116,7 +131,8 @@ export default function PlantsListPage({ params }) {
         }
         fetchPlants();
       } else {
-        console.error('Failed to add plant');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Failed to add plant:', response.status, errorData);
       }
     } catch (error) {
       console.error('Error adding plant:', error);
@@ -128,6 +144,7 @@ export default function PlantsListPage({ params }) {
   // Filtered plants based on search
   const filteredPlants = plants.filter(
     (plant) =>
+      plant.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       plant.api_id?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -160,15 +177,27 @@ export default function PlantsListPage({ params }) {
     try {
       setLoadingPlants(true);
       const res = await fetch(`/api/plants?spaceId=${spaceId}`);
+
+      if (!res.ok) {
+        console.error('Failed to fetch plants:', res.status);
+        setPlants([]);
+        return;
+      }
+
       const data = await res.json();
+      console.log('Fetched plants data:', data);
+
+      // Check if the response has the expected format
       if (Array.isArray(data)) {
         setPlants(data);
+      } else if (data.plants && Array.isArray(data.plants)) {
+        setPlants(data.plants);
       } else {
-        console.warn('No plants returned from API');
+        console.warn('Unexpected plants data format:', data);
         setPlants([]);
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching plants:', err);
       setPlants([]);
     } finally {
       setLoadingPlants(false);
@@ -291,7 +320,7 @@ export default function PlantsListPage({ params }) {
             }}
           />
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-          
+
           {searchQuery && (
             <button
               onClick={() => {
@@ -307,7 +336,7 @@ export default function PlantsListPage({ params }) {
               <X className="h-5 w-5" />
             </button>
           )}
-          
+
           {/* Search results dropdown */}
           {showResults && (searchResults.length > 0 || isSearching) && (
             <div className="absolute z-50 mt-1 w-full bg-white rounded-xl border border-gray-200 shadow-lg max-h-80 overflow-y-auto">
@@ -326,9 +355,9 @@ export default function PlantsListPage({ params }) {
                     >
                       <div className="w-10 h-10 rounded-full bg-[#5c8f57]/20 flex items-center justify-center mr-3 overflow-hidden">
                         {plant.image ? (
-                          <img 
-                            src={plant.image} 
-                            alt={plant.commonName || plant.name} 
+                          <img
+                            src={plant.image}
+                            alt={plant.commonName || plant.name}
                             className="w-full h-full object-cover rounded-full"
                           />
                         ) : (
@@ -336,12 +365,18 @@ export default function PlantsListPage({ params }) {
                         )}
                       </div>
                       <div>
-                        <div className="font-medium text-gray-800">{plant.commonName || plant.name}</div>
+                        <div className="font-medium text-gray-800">
+                          {plant.commonName || plant.name}
+                        </div>
                         {plant.name && plant.commonName && (
-                          <div className="text-sm text-gray-500">{plant.name}</div>
+                          <div className="text-sm text-gray-500">
+                            {plant.name}
+                          </div>
                         )}
                         {plant.category && (
-                          <div className="text-xs text-gray-400">{plant.category}</div>
+                          <div className="text-xs text-gray-400">
+                            {plant.category}
+                          </div>
                         )}
                       </div>
                       <div className="ml-auto">
@@ -364,7 +399,10 @@ export default function PlantsListPage({ params }) {
           {loadingPlants ? (
             // Loading skeleton
             Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+              <div
+                key={index}
+                className="p-4 bg-white rounded-xl border border-gray-200 shadow-sm"
+              >
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-full bg-gray-200 animate-pulse"></div>
                   <div className="flex-1">
@@ -380,7 +418,9 @@ export default function PlantsListPage({ params }) {
                 filteredPlants.map((plant) => (
                   <div
                     key={plant.id}
-                    onClick={() => router.push(`/dashboard/${spaceId}/${plant.id}`)}
+                    onClick={() =>
+                      router.push(`/dashboard/${spaceId}/${plant.id}`)
+                    }
                     className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                   >
                     <div
@@ -388,9 +428,9 @@ export default function PlantsListPage({ params }) {
                       style={{ backgroundColor: `${currentSpace.color}20` }}
                     >
                       {plant.image_url ? (
-                        <img 
+                        <img
                           src={plant.image_url}
-                          alt={plant.name || "Plant"}
+                          alt={plant.name || 'Plant'}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.onerror = null;
@@ -410,16 +450,16 @@ export default function PlantsListPage({ params }) {
                       <h2 className="text-lg font-medium text-gray-800">
                         {plant.name || `Plant #${plant.id}`}
                       </h2>
-                      {plant.brightness && (
-                        <div className="flex gap-2 items-center text-sm text-gray-500">
-                          <Sun className="h-3 w-3 text-amber-500" />
-                          <span>Light: {plant.brightness} lux</span>
-                        </div>
-                      )}
                       {plant.temperature && (
                         <div className="flex gap-2 items-center text-sm text-gray-500">
                           <Thermometer className="h-3 w-3 text-red-500" />
                           <span>Temp: {plant.temperature}°C</span>
+                        </div>
+                      )}
+                      {plant.brightness && (
+                        <div className="flex gap-2 items-center text-sm text-gray-500">
+                          <Sun className="h-3 w-3 text-amber-500" />
+                          <span>Light: {plant.brightness} lux</span>
                         </div>
                       )}
                     </div>
@@ -430,12 +470,16 @@ export default function PlantsListPage({ params }) {
                   {searchQuery ? (
                     <div>
                       <p>No plants found matching "{searchQuery}".</p>
-                      <p className="mt-2">Try a different search or add a new plant.</p>
+                      <p className="mt-2">
+                        Try a different search or add a new plant.
+                      </p>
                     </div>
                   ) : (
                     <div>
                       <p>No plants in this space yet.</p>
-                      <p className="mt-2">Search above to add your first plant!</p>
+                      <p className="mt-2">
+                        Search above to add your first plant!
+                      </p>
                     </div>
                   )}
                 </div>
