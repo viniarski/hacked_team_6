@@ -16,6 +16,7 @@ export default function PlantsListPage({ params }) {
   // Properly unwrap params with React.use()
   const unwrappedParams = use(params);
   const spaceId = unwrappedParams?.id || 1;
+  const [spaces, setSpaces] = useState([]);
 
   // Mock spaces data
   // const spaces = {
@@ -48,6 +49,7 @@ export default function PlantsListPage({ params }) {
       try {
         const res = await fetch('/api/spaces');
         const data = await res.json();
+        console.log(data);
         setSpaces(data);
       } catch (err) {
         console.error(err);
@@ -138,7 +140,7 @@ export default function PlantsListPage({ params }) {
           <div className="flex flex-col md:flex-row md:items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">
-                {currentSpace.name} Plants
+                {currentSpace?.tag} Plants
               </h1>
               <p className="text-gray-600 mt-1">
                 Manage your plants in this space
