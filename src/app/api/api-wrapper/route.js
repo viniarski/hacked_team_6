@@ -1,3 +1,12 @@
+//IMPORTANT 
+//
+// The order of the expected values are:
+// [watering, minLight, maxLight, minTemp, maxTemp]
+// where wattering is a string tip about frequency
+// light is in lumens 
+//temp in degrees
+
+
 // API Key
 const TOKEN = "zsaV2nCM8NI5hWTctLnI88Ih4KrZjnKL0dmsYpfZvP8";
 
