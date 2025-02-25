@@ -7,7 +7,6 @@
 #==============================================================================
 
 
-
 import requests
 
 # API Key
@@ -79,3 +78,4 @@ def SearchForIDs(searchTerm):
         toReturn.append(element["item"]["id"])
     
     return toReturn
+
