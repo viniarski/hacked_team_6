@@ -6,7 +6,7 @@ import { currentUser } from '@clerk/nextjs/server';
 export async function POST(req) {
   const db = connect();
   try {
-    const { tag } = await req.json(); // grab space name
+    const { tag, color, icon } = await req.json(); // grab space name
     const userId = (await currentUser()).id;
 
     if (!userId) {
