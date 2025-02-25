@@ -31,7 +31,7 @@ export default function SpacesPage() {
         //   throw new Error("Failed to fetch spaces");
         // }
         const spaces = await response.json();
-
+        console.log(spaces);
         if (!Array.isArray(spaces) || spaces.length === 0) {
           console.warn("No spaces returned from API");
           return;
@@ -58,12 +58,12 @@ export default function SpacesPage() {
     if (!newBoardName.trim()) return;
 
     try {
-      const response = await fetch("/api/spaces", {
+      const response = await fetch("/api/spaces/post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tag: newBoardName }),
       });
-
+      console.log(response);
       if (!response.ok) {
         console.error("Failed to create space");
         return;
