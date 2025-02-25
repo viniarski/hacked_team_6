@@ -1,33 +1,97 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Utensils, Home, Droplets, Plus, Leaf } from 'lucide-react';
-import Link from 'next/link';
-import { useAuth, UserButton } from '@clerk/nextjs';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Utensils, Home, Droplets, Plus, Leaf } from "lucide-react";
+import Link from "next/link";
+import { useAuth, UserButton } from "@clerk/nextjs";
+import CheckUser from "@/components/checkUser";
 
-const KitchenIcon = () => <Utensils className="h-10 w-10" />;
-
-const BedroomIcon = () => <Home className="h-10 w-10" />;
-
-const BathroomIcon = () => <Droplets className="h-10 w-10" />;
+// const KitchenIcon = () => <Utensils className="h-10 w-10" />;
+// const BedroomIcon = () => <Home className="h-10 w-10" />;
+// const BathroomIcon = () => <Droplets className="h-10 w-10" />;
 
 export default function SpacesPage() {
   const router = useRouter();
   const { isLoaded, userId } = useAuth();
-  const [boards, setBoards] = useState([
-    { id: 1, name: 'Kitchen', icon: KitchenIcon, color: '#5c8f57' },
-    { id: 2, name: 'Bedroom', icon: BedroomIcon, color: '#d4846f' },
-    { id: 3, name: 'Bathroom', icon: BathroomIcon, color: '#d4b16f' },
-  ]);
+  const [boards, setBoards] = useState([]);
+  //   { id: 1, name: "Kitchen", icon: KitchenIcon, color: "#5c8f57" },
+  //   { id: 2, name: "Bedroom", icon: BedroomIcon, color: "#d4846f" },
+  //   { id: 3, name: "Bathroom", icon: BathroomIcon, color: "#d4b16f" },
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newBoardName, setNewBoardName] = useState('');
+  const [newBoardName, setNewBoardName] = useState("");
+
+  // fetch spaces from db
+  useEffect(() => {
+    const fetchSpaces = async () => {
+      try {
+        const response = await fetch("/api/spaces");
+        if (!response.ok) {
+          throw new Error("Failed to fetch spaces");
+        }
+        const spaces = await response.json();
+
+        if (!Array.isArray(spaces) || spaces.length === 0) {
+          console.warn("No spaces returned from API");
+          return;
+        }
+
+        setBoards(
+          spaces.map((space) => ({
+            id: space.id,
+            name: space.tag,
+            icon: () => <Leaf className="h-10 w-10" />,
+            color: "#5c8f57",
+          }))
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSpaces();
+  }, []);
+
+  // add new board to db
+  const addNewBoard = async () => {
+    if (!newBoardName.trim()) return;
+
+    try {
+      const response = await fetch("/api/spaces", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tag: newBoardName }),
+      });
+
+      if (!response.ok) {
+        console.error("Failed to create space");
+        return;
+      }
+
+      const newSpace = await response.json();
+
+      // Update state with new space
+      setBoards(
+        spaces.map((space) => ({
+          id: space.id,
+          name: space.tag,
+          icon: Leaf,
+          color: "#5c8f57",
+        }))
+      );
+
+      setNewBoardName("");
+      setShowAddForm(false);
+    } catch (error) {
+      console.error("Error adding space:", error);
+    }
+  };
 
   // Use useEffect for navigation after render
   useEffect(() => {
     if (isLoaded && !userId) {
-      router.push('/signin');
+      router.push("/signin");
     }
   }, [isLoaded, userId, router]);
 
@@ -51,22 +115,9 @@ export default function SpacesPage() {
     return null; // We'll redirect in the useEffect above
   }
 
-  const addNewBoard = () => {
-    if (newBoardName.trim()) {
-      const newBoard = {
-        id: boards.length + 1,
-        name: newBoardName,
-        icon: () => <Leaf className="h-10 w-10" />,
-        color: '#5c8f57',
-      };
-      setBoards([...boards, newBoard]);
-      setNewBoardName('');
-      setShowAddForm(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-[#f8faf9] p-6">
+      <CheckUser />
       <div className="max-w-7xl mx-auto">
         <header className="flex justify-between items-center mb-12">
           <div>
@@ -93,8 +144,8 @@ export default function SpacesPage() {
               appearance={{
                 elements: {
                   userButtonAvatarBox: {
-                    width: '2.5rem',
-                    height: '2.5rem',
+                    width: "2.5rem",
+                    height: "2.5rem",
                   },
                 },
               }}
@@ -114,7 +165,7 @@ export default function SpacesPage() {
                 style={{ backgroundColor: `${board.color}20` }}
               >
                 <div style={{ color: board.color }}>
-                  <board.icon />
+                  {board.icon && <board.icon className="h-10 w-10" />}
                 </div>
               </div>
               <h2 className="text-xl font-medium text-gray-800">
