@@ -22,7 +22,7 @@ export async function POST(req) {
 
     // Insert new space into pi_spaces
     const result = await db.query(
-      "INSERT INTO pi_spaces (tag, user_id) VALUES ($1, $2) RETURNING id, tag;",
+      "INSERT INTO pi_spaces (tag, user_id, colour, icon) VALUES ($1, $2, $3, $4) RETURNING id, tag;",
       [tag, userId]
     );
 
