@@ -1,11 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 export default function CheckUser() {
   const [checked, setChecked] = useState(false);
-
+  const userId = useAuth();
+  
   useEffect(() => {
+    if (userId.userId === undefined) {
+      setChecked(true);
+    } else {
     const checkUser = async () => {
       try {
         const response = await fetch("/api/auth-check");
@@ -23,6 +28,7 @@ export default function CheckUser() {
     if (!checked) {
       checkUser();
     }
+  }
   }, [checked]);
 
   return null; // renders nothing

@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { connect } from "@/utils/connect.js";
-import { auth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 
 // create a new plant
 export async function POST(req) {
   const db = connect();
   try {
     const { tag, spaceId } = await req.json(); // grab plant name and space ID
-    const { userId } = auth();
+    const userId = (await currentUser()).id;
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -40,7 +40,7 @@ export async function POST(req) {
 export async function GET(req) {
   const db = connect();
   try {
-    const { userId } = auth();
+    const userId = (await currentUser()).id;
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
