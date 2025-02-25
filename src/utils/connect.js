@@ -5,8 +5,11 @@ let db;
 export const connect = () => {
   if (!db) {
     db = new pg.Pool({
-      connectionString: process.env.NEXT_PUBLIC_DB_URL,
+      connectionString: process.env.DB_URL,
     });
+    db.connect()
+      .then(() => console.log("Database connected successfully"))
+      .catch((err) => console.error("Database connection error:", err));
   }
   return db;
 };

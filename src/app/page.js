@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import {
   Leaf,
   ChevronRight,
@@ -10,44 +10,46 @@ import {
   Droplet,
   Sun,
   Shield,
-} from 'lucide-react';
-import { useAuth } from '@clerk/nextjs';
+} from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
+import CheckUser from "@/components/checkUser";
 
 export default function WelcomePage() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const { isLoaded, userId } = useAuth();
 
   const features = [
     {
-      title: 'Monitor Plant Health',
+      title: "Monitor Plant Health",
       description:
-        'Track temperature, humidity, and light levels for each of your plants',
+        "Track temperature, humidity, and light levels for each of your plants",
       icon: BarChart2,
-      color: '#5c8f57',
+      color: "#5c8f57",
     },
     {
-      title: 'Water Tracking',
-      description: 'Never forget to water your plants with smart reminders',
+      title: "Water Tracking",
+      description: "Never forget to water your plants with smart reminders",
       icon: Droplet,
-      color: '#4A90E2',
+      color: "#4A90E2",
     },
     {
-      title: 'Light Exposure',
-      description: 'Ensure your plants get the optimal amount of light',
+      title: "Light Exposure",
+      description: "Ensure your plants get the optimal amount of light",
       icon: Sun,
-      color: '#d4b16f',
+      color: "#d4b16f",
     },
     {
-      title: 'Plant Protection',
+      title: "Plant Protection",
       description:
-        'Receive alerts when conditions become harmful for your plants',
+        "Receive alerts when conditions become harmful for your plants",
       icon: Shield,
-      color: '#d4846f',
+      color: "#d4846f",
     },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8faf9] to-[#e6f0e9]">
+      <CheckUser />
       {/* Navigation */}
       <nav className="pt-6 px-6 md:px-12 flex justify-between items-center">
         <div className="flex items-center space-x-2">
