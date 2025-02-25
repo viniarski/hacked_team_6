@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import {
   Thermometer,
@@ -14,7 +14,6 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import Link from 'next/link';
-import { use } from 'react';
 import { useAuth, UserButton } from '@clerk/nextjs';
 import { MetricCard } from '@/app/dashboard/MetricCard';
 import { StatusOverview } from '@/app/dashboard/StatusOverview';
@@ -46,7 +45,7 @@ const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
         className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[#2c392f] hover:bg-[#364940] transition-colors border border-[#4a5d4e] text-[#e2e8df]"
       >
         <Leaf className="h-5 w-5 text-[#7fa37a]" />
-        <span>{selectedPlant?.name}</span>
+        <span>{selectedPlant?.name || 'Select Plant'}</span>
         <ChevronDown
           className={`h-4 w-4 transition-transform ${
             isOpen ? 'rotate-180' : ''
@@ -56,7 +55,7 @@ const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
 
       {isOpen && (
         <div className="absolute top-full right-0 mt-2 w-64 py-2 rounded-xl bg-[#2c392f] border border-[#4a5d4e] shadow-xl z-30">
-          {plants.map((plant) => (
+          {plants && plants.map((plant) => (
             <button
               key={plant.id}
               onClick={() => {
@@ -66,7 +65,7 @@ const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
               className="w-full px-4 py-2 text-left hover:bg-[#364940] transition-colors flex flex-col"
             >
               <span className="text-[#e2e8df]">{plant.name}</span>
-              <span className="text-sm text-[#7fa37a]">{plant.type}</span>
+              <span className="text-sm text-[#7fa37a]">{plant.tag}</span>
             </button>
           ))}
         </div>
@@ -78,25 +77,152 @@ const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
 export default function DashboardPage({ params }) {
   const router = useRouter();
   const { isLoaded, userId } = useAuth();
+  const { spaceId, plantId } = use(params);
+  
+  // Initialize all state at the top of the component to maintain hook order
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [plantData, setPlantData] = useState(null);
+  const [selectedPlant, setSelectedPlant] = useState(null);
+  const [metrics, setMetrics] = useState([]);
 
-  // Use useEffect for navigation after render
+  // Fetch data function
+  const fetchData = async (spaceId, plantId) => {
+    try {
+      const response = await fetch(`/api/plants?spaceId=${spaceId}&plantId=${plantId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      console.log("Fetched data:", data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError(error.message);
+      return null;
+    }
+  };
+
+  // Update metrics based on current data
+  const updateMetrics = (currentData, plantDetails) => {
+    if (!currentData) return [];
+    
+    // Define optimal and warning ranges based on plant details
+    // If no plant details, use default ranges
+    const tempOptimal = plantDetails?.temperature 
+      ? { min: plantDetails.temperature - 2, max: plantDetails.temperature + 2 }
+      : { min: 20, max: 25 };
+    
+    const tempWarning = { 
+      min: tempOptimal.min - 2, 
+      max: tempOptimal.max + 2 
+    };
+    
+    const humidityOptimal = { min: 60, max: 80 };
+    const humidityWarning = { min: 50, max: 90 };
+    
+    const brightnessOptimal = plantDetails?.brightness
+      ? { min: Math.max(0, (plantDetails.brightness / 15000 * 100) - 10), max: (plantDetails.brightness / 15000 * 100) + 10 }
+      : { min: 60, max: 90 };
+    
+    const brightnessWarning = {
+      min: Math.max(0, brightnessOptimal.min - 10),
+      max: Math.min(100, brightnessOptimal.max + 10)
+    };
+
+    return [
+      {
+        title: 'Temperature',
+        value: currentData.temperature,
+        unit: '°C',
+        icon: Thermometer,
+        color: 'text-[#d4846f]',
+        optimal: tempOptimal,
+        warning: tempWarning,
+        critical: { min: tempWarning.min - 3, max: tempWarning.max + 3 },
+        previousValue: currentData.temperature, // In a real app, you'd store historical data
+        time: new Date(currentData.collectedAt).toLocaleTimeString(),
+        gradient: 'from-[#d4846f] to-[#c27559]',
+      },
+      {
+        title: 'Humidity',
+        value: currentData.humidity,
+        unit: '%',
+        icon: Droplets,
+        color: 'text-[#7fa37a]',
+        optimal: humidityOptimal,
+        warning: humidityWarning,
+        critical: { min: 40, max: 95 },
+        previousValue: currentData.humidity,
+        time: new Date(currentData.collectedAt).toLocaleTimeString(),
+        gradient: 'from-[#7fa37a] to-[#5c8f57]',
+      },
+      {
+        title: 'Light Level',
+        value: currentData.brightness,
+        unit: '%',
+        icon: Sun,
+        color: 'text-[#d4b16f]',
+        optimal: brightnessOptimal,
+        warning: brightnessWarning,
+        critical: { min: 20, max: 100 },
+        previousValue: currentData.brightness,
+        time: new Date(currentData.collectedAt).toLocaleTimeString(),
+        gradient: 'from-[#d4b16f] to-[#c29859]',
+      },
+    ];
+  };
+
+  // Handle plant selection
+  const handlePlantChange = (plant) => {
+    setSelectedPlant(plant);
+    router.push(`/dashboard/${spaceId}/${plant.id}`);
+  };
+
+  // Load data when component mounts or params change
   useEffect(() => {
+    // Redirect if not authenticated
     if (isLoaded && !userId) {
       router.push('/signin');
+      return;
     }
-  }, [isLoaded, userId, router]);
 
-  // If still loading auth state, show nothing or a loading indicator
-  if (!isLoaded) {
+    if (isLoaded && userId && spaceId && plantId) {
+      setLoading(true);
+      
+      // Fetch data
+      fetchData(spaceId, plantId).then(data => {
+        if (data) {
+          setPlantData(data);
+          
+          // Set selected plant
+          if (data.plant) {
+            setSelectedPlant(data.plant);
+          } else if (data.plants && data.plants.length > 0) {
+            setSelectedPlant(data.plants[0]);
+          }
+          
+          // Set metrics based on fetched data
+          if (data.currentData) {
+            setMetrics(updateMetrics(data.currentData, data.plant));
+          }
+        }
+        setLoading(false);
+      });
+    }
+  }, [isLoaded, userId, spaceId, plantId, router]);
+
+  // If still loading auth state, show loading indicator
+  if (!isLoaded || loading) {
     return (
       <div className="min-h-screen bg-[#f8faf9] flex items-center justify-center">
-           <Image
-            src="/logo_flaura.webp"
-            alt="Flaura Logo"
-            width={88}
-            height={64}
-            className="h-16 w-auto"
-          />
+        <Image
+          src="/logo_flaura.webp"
+          alt="Flaura Logo"
+          width={88}
+          height={64}
+          className="h-16 w-auto"
+        />
       </div>
     );
   }
@@ -106,79 +232,24 @@ export default function DashboardPage({ params }) {
     return null; // We'll redirect in the useEffect above
   }
 
-  // Properly unwrap params with React.use()
-  const unwrappedParams = use(params);
-  const { spaceId, plantId } = unwrappedParams;
+  // If there's an error
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#f8faf9] flex items-center justify-center flex-col">
+        <Image
+          src="/logo_flaura.webp"
+          alt="Flaura Logo"
+          width={88}
+          height={64}
+          className="h-16 w-auto mb-4"
+        />
+        <div className="text-red-500">Error: {error}</div>
+      </div>
+    );
+  }
 
-  // Mock spaces data
-  const spaces = {
-    1: { name: 'Kitchen', color: '#5c8f57' },
-    2: { name: 'Bedroom', color: '#d4846f' },
-    3: { name: 'Bathroom', color: '#d4b16f' },
-  };
-
-  // Mock plants data
-  const plantsData = [
-    { id: 1, name: 'Monstera Deliciosa', type: 'Tropical' },
-    { id: 2, name: 'Snake Plant', type: 'Succulent' },
-    { id: 3, name: 'Peace Lily', type: 'Flowering' },
-    { id: 4, name: 'Fiddle Leaf Fig', type: 'Indoor Tree' },
-  ];
-
-  const [selectedPlant, setSelectedPlant] = useState(
-    plantsData.find((p) => p.id.toString() === plantId.toString()) ||
-      plantsData[0]
-  );
-
-  // Change route when plant changes
-  const handlePlantChange = (plant) => {
-    setSelectedPlant(plant);
-    router.push(`/dashboard/${spaceId}/${plant.id}`);
-  };
-
-  const currentSpace = spaces[spaceId];
-
-  const metrics = [
-    {
-      title: 'Temperature',
-      value: 23.5,
-      unit: '°C',
-      icon: Thermometer,
-      color: 'text-[#d4846f]',
-      optimal: { min: 20, max: 25 },
-      warning: { min: 18, max: 27 },
-      critical: { min: 15, max: 30 },
-      previousValue: 24.2,
-      time: '1h ago',
-      gradient: 'from-[#d4846f] to-[#c27559]',
-    },
-    {
-      title: 'Humidity',
-      value: 65,
-      unit: '%',
-      icon: Droplets,
-      color: 'text-[#7fa37a]',
-      optimal: { min: 60, max: 80 },
-      warning: { min: 50, max: 90 },
-      critical: { min: 40, max: 95 },
-      previousValue: 68,
-      time: '1h ago',
-      gradient: 'from-[#7fa37a] to-[#5c8f57]',
-    },
-    {
-      title: 'Light Level',
-      value: 80,
-      unit: '%',
-      icon: Sun,
-      color: 'text-[#d4b16f]',
-      optimal: { min: 60, max: 90 },
-      warning: { min: 40, max: 95 },
-      critical: { min: 30, max: 100 },
-      previousValue: 75,
-      time: '1h ago',
-      gradient: 'from-[#d4b16f] to-[#c29859]',
-    },
-  ];
+  // Get space details
+  const currentSpace = plantData?.space || { name: 'Plants', color: '#5c8f57' };
 
   return (
     <div className="min-h-screen bg-[#f8faf9] p-6">
@@ -190,7 +261,7 @@ export default function DashboardPage({ params }) {
             className="flex items-center text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="h-5 w-5 mr-1" />
-            Back to {currentSpace.name} Plants
+            Back to {currentSpace.tag || 'Space'} Plants
           </Link>
 
           <UserButton
@@ -208,7 +279,7 @@ export default function DashboardPage({ params }) {
 
         {/* Logo */}
         <div className="mb-6">
-        <Image
+          <Image
             src="/logo_flaura.webp"
             alt="Flaura Logo"
             width={88}
@@ -246,7 +317,7 @@ export default function DashboardPage({ params }) {
               <StatusOverview metrics={metrics} />
               <PlantSelector
                 selectedPlant={selectedPlant}
-                plants={plantsData}
+                plants={plantData?.plants || []}
                 onSelect={handlePlantChange}
               />
             </div>
