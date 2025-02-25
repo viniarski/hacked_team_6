@@ -1,7 +1,7 @@
-// src/app/dashboard/MetricCard.jsx
 'use client';
 
 import { useState } from 'react';
+import { ArrowUp, ArrowDown, Info } from 'lucide-react';
 
 export const MetricCard = ({
   title,
@@ -11,15 +11,37 @@ export const MetricCard = ({
   color,
   optimal,
   warning,
+  critical,
+  previousValue,
+  plantValue,
+  time,
   gradient,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const getStatusColor = () => {
     if (value >= optimal.min && value <= optimal.max) return 'bg-[#7fa37a]';
     if (value >= warning.min && value <= warning.max) return 'bg-[#d4b16f]';
     return 'bg-[#d4846f]';
   };
+
+  // Calculate difference between current value and plant's ideal value
+  const calculateDifference = () => {
+    if (plantValue === null || plantValue === undefined) return null;
+
+    const diff = value - plantValue;
+    const percentDiff = (Math.abs(diff) / plantValue) * 100;
+
+    return {
+      value: diff.toFixed(1),
+      percent: percentDiff.toFixed(0),
+      increased: diff > 0,
+      significant: percentDiff > 10, // Consider difference significant if > 10%
+    };
+  };
+
+  const difference = calculateDifference();
 
   return (
     <div
@@ -32,24 +54,69 @@ export const MetricCard = ({
       <div className="absolute top-4 right-4">
         <Icon className={`h-6 w-6 ${color}`} />
       </div>
+
       <div className="flex flex-col space-y-3">
         <span className="text-sm font-medium text-[#a8b3a6]">{title}</span>
         <div className="flex items-baseline gap-2">
           <span
             className={`text-4xl font-bold bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}
           >
-            {value}
+            {typeof value === 'number' ? value.toFixed(1) : value}
           </span>
           <span className="text-[#a8b3a6]">{unit}</span>
         </div>
+
+        {/* Plant's ideal value comparison */}
+        {plantValue !== null && plantValue !== undefined && (
+          <div className="flex items-center gap-2 mt-1">
+            <div
+              className="relative cursor-pointer"
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+            >
+              <Info className="h-4 w-4 text-[#a8b3a6]" />
+              {showTooltip && (
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 p-2 bg-[#1c2922] text-[#e2e8df] text-xs rounded-lg shadow-lg z-10 w-48">
+                  Ideal {title.toLowerCase()} for this plant is {plantValue}
+                  {unit}
+                </div>
+              )}
+            </div>
+
+            <span className="text-sm text-[#a8b3a6]">
+              Ideal: {plantValue}
+              {unit}
+            </span>
+
+            {difference && (
+              <span
+                className={`text-sm ml-auto ${
+                  difference.increased ? 'text-[#d4846f]' : 'text-[#7fa37a]'
+                }`}
+              >
+                {difference.increased ? (
+                  <ArrowUp className="h-3 w-3 inline" />
+                ) : (
+                  <ArrowDown className="h-3 w-3 inline" />
+                )}
+                {difference.value}
+                {unit}
+              </span>
+            )}
+          </div>
+        )}
+
         <div className="flex items-center gap-2">
           <div className={`h-2 w-2 rounded-full ${getStatusColor()}`} />
           <span className="text-sm text-[#a8b3a6]">
-            Optimal: {optimal.min}-{optimal.max}
+            Optimal: {optimal.min.toFixed(1)}-{optimal.max.toFixed(1)}
             {unit}
           </span>
         </div>
+
+        <div className="text-xs text-[#a8b3a6] mt-1">Updated at {time}</div>
       </div>
+
       {isHovered && (
         <div
           className={`absolute inset-x-0 -bottom-0 h-1 rounded-b-2xl bg-gradient-to-r ${gradient}`}
