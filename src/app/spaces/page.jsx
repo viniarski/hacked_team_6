@@ -92,7 +92,7 @@ export default function SpacesPage() {
           alt="Flaura Logo"
           width={88}
           height={64}
-          className="h-16 w-auto animate-pulse"
+          className="h-16 w-auto"
         />
       </div>
     );
@@ -118,7 +118,7 @@ export default function SpacesPage() {
                 className="h-16 w-auto"
               />
             </div>
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl mt-16 font-bold text-gray-800">
               My Plant Spaces
             </h1>
             <p className="text-gray-600 mt-2">
