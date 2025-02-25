@@ -12,7 +12,7 @@ export async function GET(req) {
     }
 
     const result = await db.query(
-      "SELECT id, tag, space_id, watered FROM pi_plants WHERE space_id IN (SELECT id FROM pi_spaces WHERE user_id = $1)",
+      "SELECT id, space_id, watered, api_id FROM pi_plants WHERE space_id IN (SELECT id FROM pi_spaces WHERE user_id = $1)",
       [userId]
     );
 

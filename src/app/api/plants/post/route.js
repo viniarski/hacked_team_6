@@ -6,14 +6,14 @@ import { currentUser } from "@clerk/nextjs/server";
 export async function POST(req) {
   const db = connect();
   try {
-    const { tag, spaceId } = await req.json(); // grab plant name and space ID
+    const { apiId, spaceId } = await req.json(); // grab plant name and space ID
     const userId = (await currentUser()).id;
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!tag || tag.trim() === "" || !spaceId) {
+    if (!apiId || apiId.trim() === "" || !spaceId) {
       return NextResponse.json(
         { error: "Invalid plant data" },
         { status: 400 }
@@ -22,8 +22,8 @@ export async function POST(req) {
 
     // insert new plant into pi_plants
     const result = await db.query(
-      "INSERT INTO pi_plants (tag, space_id) VALUES ($1, $2) RETURNING id, tag, space_id, watered;",
-      [tag, spaceId]
+      "INSERT INTO pi_plants (api_id, space_id) VALUES ($1, $2) RETURNING id, api_id, space_id, watered;",
+      [apiId, spaceId]
     );
 
     return NextResponse.json(result.rows[0], { status: 201 });
