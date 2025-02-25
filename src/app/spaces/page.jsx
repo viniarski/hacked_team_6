@@ -99,13 +99,13 @@ export default function SpacesPage() {
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-[#f8faf9] flex items-center justify-center">
-        <Image
-          src="/logo_flaura.webp"
-          alt="Flaura Logo"
-          width={150}
-          height={40}
-          className="h-10 w-auto animate-pulse"
-        />
+          <Image
+            src="/logo_flaura.webp"
+            alt="Flaura Logo"
+            width={88}
+            height={64}
+            className="h-16 w-auto"
+          />
       </div>
     );
   }
@@ -122,15 +122,15 @@ export default function SpacesPage() {
         <header className="flex justify-between items-center mb-12">
           <div>
             <div className="mb-4">
-              <Image
-                src="/logo_flaura.webp"
-                alt="Flaura Logo"
-                width={150}
-                height={40}
-                className="h-10 w-auto"
-              />
+            <Image
+            src="/logo_flaura.webp"
+            alt="Flaura Logo"
+            width={88}
+            height={64}
+            className="h-16 w-auto"
+          />
             </div>
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl mt-16 font-bold text-gray-800">
               My Plant Spaces
             </h1>
             <p className="text-gray-600 mt-2">

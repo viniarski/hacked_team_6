@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { Leaf, ArrowLeft, Plus, Search } from "lucide-react";
-import Link from "next/link";
-import { use } from "react";
-import { useAuth, UserButton } from "@clerk/nextjs";
-import CheckUser from "@/components/checkUser";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { Leaf, ArrowLeft, Plus, Search } from 'lucide-react';
+import Link from 'next/link';
+import { use } from 'react';
+import { useAuth, UserButton } from '@clerk/nextjs';
+import CheckUser from '@/components/checkUser';
 
 export default function PlantsListPage({ params }) {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function PlantsListPage({ params }) {
   //   { id: 4, name: 'Fiddle Leaf Fig', type: 'Indoor Tree', lastWatered: '3 days ago' },
   // ]);
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
 
   const filteredPlants = plants.filter(
     (plant) =>
@@ -46,7 +46,7 @@ export default function PlantsListPage({ params }) {
   useEffect(() => {
     const fetchSpaces = async () => {
       try {
-        const res = await fetch("/api/spaces");
+        const res = await fetch('/api/spaces');
         const data = await res.json();
         setSpaces(data);
       } catch (err) {
@@ -75,7 +75,7 @@ export default function PlantsListPage({ params }) {
   // Use useEffect for navigation after render
   useEffect(() => {
     if (isLoaded && !userId) {
-      router.push("/signin");
+      router.push('/signin');
     }
   }, [isLoaded, userId, router]);
 
@@ -83,13 +83,13 @@ export default function PlantsListPage({ params }) {
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-[#f8faf9] flex items-center justify-center">
-        <Image
-          src="/logo_flaura.webp"
-          alt="Flaura Logo"
-          width={150}
-          height={40}
-          className="h-10 w-auto animate-pulse"
-        />
+          <Image
+            src="/logo_flaura.webp"
+            alt="Flaura Logo"
+            width={88}
+            height={64}
+            className="h-16 w-auto"
+          />
       </div>
     );
   }
@@ -117,8 +117,8 @@ export default function PlantsListPage({ params }) {
               appearance={{
                 elements: {
                   userButtonAvatarBox: {
-                    width: "2.5rem",
-                    height: "2.5rem",
+                    width: '2.5rem',
+                    height: '2.5rem',
                   },
                 },
               }}
@@ -126,13 +126,13 @@ export default function PlantsListPage({ params }) {
           </div>
 
           <div className="flex items-center mb-4">
-            <Image
-              src="/logo_flaura.webp"
-              alt="Flaura Logo"
-              width={150}
-              height={40}
-              className="h-8 w-auto"
-            />
+          <Image
+            src="/logo_flaura.webp"
+            alt="Flaura Logo"
+            width={88}
+            height={64}
+            className="h-16 w-auto"
+          />
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between">
