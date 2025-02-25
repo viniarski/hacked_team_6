@@ -3,8 +3,8 @@ const TOKEN = "zsaV2nCM8NI5hWTctLnI88Ih4KrZjnKL0dmsYpfZvP8";
 
 // Pass in an ID as a string.
 // Returns an array in the format [minTemp, maxTemp, minLight, maxLight, watering]
-async function FindFromID(id) {
-
+export default async function FindFromID(id) {
+    var expected = [];
     // Form the API request
     const headers = {
         "Authorization": "Bearer 6963|BbeMn037WJ8vTWKZs6MmI7C0Gwyj9xbEq1xUcCC0"
@@ -19,6 +19,8 @@ async function FindFromID(id) {
     let maxLight = 0;
 
     const watering = result['Watering'];
+    expected.push(watering);
+    
 
     if (result["Light ideal"] && result["Light ideal"]?.includes("+")) {
         // Pull the light levels from the string
@@ -31,6 +33,8 @@ async function FindFromID(id) {
             .split("/")[0];
         minLight = splitLightDisplay;
         maxLight = "Infinity";
+        expected.push(minLight);
+        expected.push(maxLight);
     } else if(result["Light ideal"]) {
         const splitLightDisplay = result["Light ideal"]
             .replace(" lux", "")
@@ -40,23 +44,29 @@ async function FindFromID(id) {
             .split(" to ");
         minLight = parseInt(splitLightDisplay[1]);
         maxLight = parseInt(splitLightDisplay[0]);
+        expected.push(minLight);
+        expected.push(maxLight);
     }
 
     let temperatureMin = result["Temperature min"];
-    if (temperatureMin !== null && temperatureMin["C"]) {
-        temperatureMin = temperatureMin["C"];
+    if (temperatureMin && temperatureMin["C"]) {
+        //temperatureMin = temperatureMin["C"];
+        const minTemp = temperatureMin["C"]
+        expected.push(minTemp);
     } else {
         temperatureMin = -273;
     }
 
     let temperatureMax = result["Temperature max"];
     if (temperatureMax !== null&& temperatureMin["C"]) {
-        temperatureMax = temperatureMax["C"];
+        //temperatureMax = temperatureMax["C"];
+        const maxTemp = temperatureMax["C"]
+        expected.push(maxTemp);
     } else {
         temperatureMax = 999;
     }
 
-    const expected = [temperatureMin, temperatureMax, minLight, maxLight, watering];
+
     console.log(expected);
     return expected;
 }
