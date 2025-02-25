@@ -59,7 +59,7 @@ export default function SpacesPage() {
         spaces.map((space) => ({
           id: space.id,
           name: space.tag,
-          icon: getIconComponent(space.icon_type),
+          icon: getIconComponent(space.icon),
           color: space.color || '#5c8f57',
         }))
       );
@@ -215,7 +215,6 @@ export default function SpacesPage() {
               <h2 className="text-xl font-medium text-gray-800">
                 {board.name}
               </h2>
-              <span className="mt-2 text-sm text-gray-500">4 plants</span>
             </Link>
           ))}
 
