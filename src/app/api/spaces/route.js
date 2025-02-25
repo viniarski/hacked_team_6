@@ -12,7 +12,7 @@ export async function GET() {
     }
 
     const result = await db.query(
-      "SELECT id, tag, colour, icon FROM pi_spaces WHERE user_id = $1",
+      "SELECT id, tag, color, icon FROM pi_spaces WHERE user_id = $1",
       [userId]
     );
 
