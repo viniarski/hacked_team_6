@@ -90,13 +90,13 @@ export default function DashboardPage({ params }) {
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-[#f8faf9] flex items-center justify-center">
-        <Image
-          src="/logo_flaura.webp"
-          alt="Flaura Logo"
-          width={150}
-          height={40}
-          className="h-10 w-auto animate-pulse"
-        />
+           <Image
+            src="/logo_flaura.webp"
+            alt="Flaura Logo"
+            width={88}
+            height={64}
+            className="h-16 w-auto"
+          />
       </div>
     );
   }
@@ -208,12 +208,12 @@ export default function DashboardPage({ params }) {
 
         {/* Logo */}
         <div className="mb-6">
-          <Image
+        <Image
             src="/logo_flaura.webp"
             alt="Flaura Logo"
-            width={150}
-            height={40}
-            className="h-8 w-auto"
+            width={88}
+            height={64}
+            className="h-16 w-auto"
           />
         </div>
 
