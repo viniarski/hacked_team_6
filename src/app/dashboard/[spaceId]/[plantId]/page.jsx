@@ -22,6 +22,7 @@ import { TimelineEvent } from '@/components/TimelineEvent';
 import PlantMetricsCharts from '@/components/PlantMetricsCharts';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useTheme } from '@/components/ThemeProvider';
+import { motion } from "motion/react";
 
 // TimeDisplay component
 const TimeDisplay = () => {
@@ -277,6 +278,13 @@ export default function DashboardPage({ params }) {
   if (!isLoaded || loading) {
     return (
       <div className="min-h-screen bg-[#f8faf9] flex items-center justify-center">
+        <motion.div             
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.4,
+              scale: { type: "spring", visualDuration: 0.6, bounce: 0.5 },
+          }}>
         <Image
           src="/logo_flaura.webp"
           alt="Flaura Logo"
@@ -284,6 +292,7 @@ export default function DashboardPage({ params }) {
           height={64}
           className="h-16 w-auto"
         />
+      </motion.div>
       </div>
     );
   }
