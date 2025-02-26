@@ -29,7 +29,7 @@ while True:
     print(brightness)
     data = supabase.table("pi_data").insert({"temperature": temperature, "pressure":pressure, "humidity":humidity, "brightness":brightness}).execute()
     print("Added to db")
-    sleep(60)
+    sleep(60*30) # 30 min updates
 
 
 # example select for testing
