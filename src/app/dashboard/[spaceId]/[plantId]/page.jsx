@@ -20,6 +20,8 @@ import { MetricCard } from '@/app/dashboard/MetricCard';
 import { StatusOverview } from '@/app/dashboard/StatusOverview';
 import { TimelineEvent } from '@/components/TimelineEvent';
 import PlantMetricsCharts from '@/components/PlantMetricsCharts';
+import ThemeToggle from '@/components/ThemeToggle';
+import { useTheme } from '@/components/ThemeProvider';
 import { motion } from "motion/react";
 
 // TimeDisplay component
@@ -40,12 +42,13 @@ const TimeDisplay = () => {
 // PlantSelector component
 const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { theme } = useTheme();
 
   return (
     <div className="relative z-20">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 px-4 py-2 rounded-xl bg-[#2c392f] hover:bg-[#364940] transition-colors border border-[#4a5d4e] text-[#e2e8df]"
+        className="flex items-center gap-3 px-4 py-2 rounded-xl theme-card theme-hover transition-colors shadow-sm"
       >
         <Leaf className="h-5 w-5 text-[#7fa37a]" />
         <span>{selectedPlant?.name || 'Select Plant'}</span>
@@ -57,7 +60,7 @@ const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
       </button>
 
       {isOpen && plants && plants.length > 0 && (
-        <div className="absolute top-full right-0 mt-2 w-64 py-2 rounded-xl bg-[#2c392f] border border-[#4a5d4e] shadow-xl z-30">
+        <div className="absolute top-full right-0 mt-2 w-64 py-2 rounded-xl theme-card shadow-xl z-30">
           {plants.map((plant) => (
             <button
               key={plant.id}
@@ -65,9 +68,9 @@ const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
                 onSelect(plant);
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-2 text-left hover:bg-[#364940] transition-colors flex flex-col"
+              className="w-full px-4 py-2 text-left theme-hover transition-colors flex flex-col"
             >
-              <span className="text-[#e2e8df]">
+              <span className="theme-text-primary">
                 {plant.name || `Plant #${plant.id}`}
               </span>
               {plant.api_id && (
@@ -86,6 +89,7 @@ const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
 export default function DashboardPage({ params }) {
   const router = useRouter();
   const { isLoaded, userId } = useAuth();
+  const { theme } = useTheme();
   const unwrappedParams = use(params);
   const spaceId = unwrappedParams?.spaceId;
   const plantId = unwrappedParams?.plantId;
@@ -342,20 +346,25 @@ export default function DashboardPage({ params }) {
               className="h-16 w-auto"
             />
           </div>
-          <UserButton
-            appearance={{
-              elements: {
-                userButtonAvatarBox: {
-                  width: '2.5rem',
-                  height: '2.5rem',
+
+          {/* User button with theme toggle */}
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <UserButton
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: {
+                    width: '2.5rem',
+                    height: '2.5rem',
+                  },
                 },
-              },
-            }}
-          />
+              }}
+            />
+          </div>
         </div>
 
-        {/* Header with solid background */}
-        <div className="rounded-2xl border border-[#4a5d4e] bg-[#2c392f] p-6 mb-8">
+        {/* Header */}
+        <div className="rounded-2xl border theme-card p-6 mb-8 shadow-sm">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex flex-row items-center gap-4">
               <div className="relative w-16 h-16 bg-[#7fa37a]/30 rounded-full overflow-hidden flex items-center justify-center">
@@ -370,17 +379,17 @@ export default function DashboardPage({ params }) {
                 )}
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-[#e2e8df]">
+                <h1 className="text-2xl md:text-3xl font-bold theme-text-primary">
                   {selectedPlant?.name || 'Plant'}
                 </h1>
                 <div className="flex items-center gap-2 mt-1">
-                  <Clock className="h-4 w-4 text-[#a8b3a6]" />
-                  <span className="text-sm text-[#a8b3a6]">
+                  <Clock className="h-4 w-4 theme-text-tertiary" />
+                  <span className="text-sm theme-text-tertiary">
                     <TimeDisplay />
                   </span>
-                  <span className="mx-1 text-[#4a5d4e]">|</span>
-                  <Calendar className="h-4 w-4 text-[#a8b3a6]" />
-                  <span className="text-sm text-[#a8b3a6]">
+                  <span className="mx-1 opacity-30 theme-text-tertiary">|</span>
+                  <Calendar className="h-4 w-4 theme-text-tertiary" />
+                  <span className="text-sm theme-text-tertiary">
                     {new Date().toLocaleDateString()}
                   </span>
                 </div>
@@ -411,8 +420,8 @@ export default function DashboardPage({ params }) {
             <PlantMetricsCharts plantId={plantId} spaceId={spaceId} />
 
             {/* Recent Changes Timeline */}
-            <div className="bg-[#2c392f] rounded-2xl border border-[#4a5d4e] p-6 mt-8">
-              <h2 className="text-lg font-semibold mb-6 text-[#e2e8df]">
+            <div className="theme-card rounded-2xl shadow-sm p-6 mt-8">
+              <h2 className="text-lg font-semibold mb-6 theme-text-primary">
                 Recent Changes
               </h2>
               <div className="space-y-4">
@@ -430,12 +439,12 @@ export default function DashboardPage({ params }) {
             </div>
           </>
         ) : (
-          <div className="bg-[#2c392f] rounded-2xl border border-[#4a5d4e] p-8 text-center">
+          <div className="theme-card rounded-2xl shadow-sm p-8 text-center">
             <Leaf className="h-16 w-16 text-[#7fa37a]/40 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-[#e2e8df] mb-2">
+            <h2 className="text-xl font-semibold theme-text-primary mb-2">
               No Sensor Data Available
             </h2>
-            <p className="text-[#a8b3a6] max-w-md mx-auto">
+            <p className="theme-text-secondary max-w-md mx-auto">
               We're waiting for your Raspberry Pi to send us some data about
               your plant's environment. Make sure your sensors are connected and
               running.
