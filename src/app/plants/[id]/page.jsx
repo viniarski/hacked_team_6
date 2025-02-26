@@ -259,10 +259,9 @@ export default function PlantsListPage({ params }) {
           <div className="flex items-center justify-between mb-4">
             <Link
               href="/spaces"
-              className="flex items-center text-gray-600 hover:text-gray-900"
+              className="flex items-center text-gray-600 hover:text-gray-400"
             >
-              <ArrowLeft className="h-5 w-5 mr-1" />
-              Back to Spaces
+              <ArrowLeft className="h-7 w-7 mr-1" />
             </Link>
 
             <Image

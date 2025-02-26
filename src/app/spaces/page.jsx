@@ -169,10 +169,9 @@ export default function SpacesPage() {
           <div className="flex items-center justify-between mb-4">
             <Link
               href="/"
-              className="flex items-center text-gray-600 hover:text-gray-900"
+              className="flex items-center text-gray-600 hover:text-gray-400"
             >
-              <ArrowLeft className="h-5 w-5 mr-1" />
-              Back to Home
+              <ArrowLeft className="h-7 w-7 mr-1" />
             </Link>
 
             <Image

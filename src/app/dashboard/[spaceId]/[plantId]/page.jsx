@@ -318,10 +318,9 @@ export default function DashboardPage({ params }) {
         <div className="flex justify-between items-center mb-6">
           <Link
             href={`/plants/${spaceId}`}
-            className="flex items-center text-gray-600 hover:text-gray-900"
+            className="flex items-center text-gray-600 hover:text-gray-400"
           >
-            <ArrowLeft className="h-5 w-5 mr-1" />
-            Back to {currentSpace.tag || 'Space'} Plants
+            <ArrowLeft className="h-7 w-7 mr-1" />
           </Link>
 
           {/* Logo */}
