@@ -324,6 +324,16 @@ export default function DashboardPage({ params }) {
             Back to {currentSpace.tag || 'Space'} Plants
           </Link>
 
+          {/* Logo */}
+          <div className="mb-6">
+            <Image
+              src="/logo_flaura.webp"
+              alt="Flaura Logo"
+              width={88}
+              height={64}
+              className="h-16 w-auto"
+            />
+          </div>
           <UserButton
             appearance={{
               elements: {
@@ -333,17 +343,6 @@ export default function DashboardPage({ params }) {
                 },
               },
             }}
-          />
-        </div>
-
-        {/* Logo */}
-        <div className="mb-6">
-          <Image
-            src="/logo_flaura.webp"
-            alt="Flaura Logo"
-            width={88}
-            height={64}
-            className="h-16 w-auto"
           />
         </div>
 

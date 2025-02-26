@@ -10,6 +10,7 @@ import {
   Plus,
   Leaf,
   ChevronDown,
+  ArrowLeft,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth, UserButton } from '@clerk/nextjs';
@@ -164,26 +165,24 @@ export default function SpacesPage() {
     <div className="min-h-screen bg-[#f8faf9] p-6">
       <CheckUser />
       <div className="max-w-7xl mx-auto">
-        <header className="flex justify-between items-center mb-12">
-          <div>
-            <div className="mb-4">
-              <Image
-                src="/logo_flaura.webp"
-                alt="Flaura Logo"
-                width={88}
-                height={64}
-                className="h-16 w-auto"
-              />
-            </div>
-            <h1 className="text-3xl mt-16 font-bold text-gray-800">
-              My Plant Spaces
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Select a space to view your plants
-            </p>
-          </div>
+        <header className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <Link
+              href="/"
+              className="flex items-center text-gray-600 hover:text-gray-900"
+            >
+              <ArrowLeft className="h-5 w-5 mr-1" />
+              Back to Home
+            </Link>
 
-          <div className="flex items-center gap-4">
+            <Image
+              src="/logo_flaura.webp"
+              alt="Flaura Logo"
+              width={88}
+              height={64}
+              className="h-16 w-auto"
+            />
+
             <UserButton
               appearance={{
                 elements: {
@@ -194,6 +193,17 @@ export default function SpacesPage() {
                 },
               }}
             />
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">
+                My Plant Spaces
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Select a space to view your plants
+              </p>
+            </div>
           </div>
         </header>
 

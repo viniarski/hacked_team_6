@@ -265,6 +265,14 @@ export default function PlantsListPage({ params }) {
               Back to Spaces
             </Link>
 
+            <Image
+              src="/logo_flaura.webp"
+              alt="Flaura Logo"
+              width={88}
+              height={64}
+              className="h-16 w-auto"
+            />
+
             <UserButton
               appearance={{
                 elements: {
@@ -274,16 +282,6 @@ export default function PlantsListPage({ params }) {
                   },
                 },
               }}
-            />
-          </div>
-
-          <div className="flex items-center mb-4">
-            <Image
-              src="/logo_flaura.webp"
-              alt="Flaura Logo"
-              width={88}
-              height={64}
-              className="h-16 w-auto"
             />
           </div>
 
