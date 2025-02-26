@@ -450,18 +450,20 @@ export default function PlantsListPage({ params }) {
                       <h2 className="text-lg font-medium text-gray-800">
                         {plant.name || `Plant #${plant.id}`}
                       </h2>
-                      {plant.temperature && (
-                        <div className="flex gap-2 items-center text-sm text-gray-500">
-                          <Thermometer className="h-3 w-3 text-red-500" />
-                          <span>Temp: {plant.temperature}°C</span>
-                        </div>
-                      )}
-                      {plant.brightness && (
-                        <div className="flex gap-2 items-center text-sm text-gray-500">
-                          <Sun className="h-3 w-3 text-amber-500" />
-                          <span>Light: {plant.brightness} lux</span>
-                        </div>
-                      )}
+                      <div className="flex gap-4 text-sm text-gray-500">
+                        {plant.temperature && (
+                          <div className="flex items-center gap-1">
+                            <Thermometer className="h-3 w-3 text-red-500" />
+                            <span>Ideal temp: {plant.temperature}°C</span>
+                          </div>
+                        )}
+                        {plant.brightness && (
+                          <div className="flex items-center gap-1">
+                            <Sun className="h-3 w-3 text-amber-500" />
+                            <span>Ideal light: {plant.brightness} lux</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))

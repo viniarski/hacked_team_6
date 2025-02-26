@@ -22,13 +22,11 @@ export async function GET(req) {
     );
     const recentData = recentDataResult.rows[0];
     
-    // Convert pi data humidity from value to percentage
-    const humidityPercentage = recentData ? 
-      Math.round((recentData.humidity / 256) * 100) : 0;
+    // Convert pi data humidity - using raw value from the DB without conversion
+    const humidityValue = recentData ? recentData.humidity : 0;
     
-    // Convert brightness to percentage with 15000 as max
-    const brightnessPercentage = recentData ? 
-      Math.min(100, Math.round((recentData.brightness / 15000) * 100)) : 0;
+    // Convert brightness from raw value to lux (multiplying by 10)
+    const brightnessLux = recentData ? recentData.brightness * 10 : 0;
     
     // Fetch plant details if plantId exists
     let plantDetails = null;
@@ -63,8 +61,8 @@ export async function GET(req) {
     return NextResponse.json({
       currentData: recentData ? {
         temperature: recentData.temperature,
-        humidity: humidityPercentage,
-        brightness: brightnessPercentage,
+        humidity: humidityValue,
+        brightness: brightnessLux,
         collectedAt: recentData.collected_at
       } : null,
       plant: plantDetails,
