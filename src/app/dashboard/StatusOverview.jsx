@@ -1,11 +1,18 @@
 'use client';
 
+import { useTheme } from '@/components/ThemeProvider';
+
 export const StatusOverview = ({ metrics }) => {
+  const { theme } = useTheme();
+
   const getOverallStatus = () => {
     if (!metrics || metrics.length === 0) {
       return {
         text: 'No Data Available',
-        color: 'text-[#e2e8df] bg-[#4a5d4e]',
+        color:
+          theme === 'light'
+            ? 'text-gray-800 bg-gray-200'
+            : 'text-[#e2e8df] bg-[#4a5d4e]',
       };
     }
 
@@ -32,18 +39,18 @@ export const StatusOverview = ({ metrics }) => {
     if (criticalCount > 0)
       return {
         text: 'Critical Attention Needed',
-        color: 'text-[#e2e8df] bg-[#9e5548]',
+        color: 'text-white bg-[#9e5548]',
       };
 
     if (warningCount > 0 || significantDeviations > 0)
       return {
         text: 'Some Parameters Need Attention',
-        color: 'text-[#e2e8df] bg-[#9e8548]',
+        color: 'text-white bg-[#9e8548]',
       };
 
     return {
       text: 'All Parameters Optimal',
-      color: 'text-[#e2e8df] bg-[#5c8f57]',
+      color: 'text-white bg-[#5c8f57]',
     };
   };
 
@@ -51,9 +58,9 @@ export const StatusOverview = ({ metrics }) => {
 
   return (
     <div
-      className={`rounded-full px-4 py-2 ${status.color} border border-[#4a5d4e] inline-flex items-center gap-2`}
+      className={`rounded-full px-4 py-2 ${status.color} border border-transparent shadow-sm inline-flex items-center gap-2`}
     >
-      <div className={`h-2 w-2 rounded-full bg-[#e2e8df]`} />
+      <div className={`h-2 w-2 rounded-full bg-white/80`} />
       <span className="font-medium">{status.text}</span>
     </div>
   );

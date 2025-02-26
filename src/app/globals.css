@@ -3,12 +3,77 @@
 @import 'tailwindcss/utilities';
 
 :root {
+  /* Fixed Background Color */
   --background: #f8faf9;
   --foreground: #333333;
+
+  /* Light Theme Colors */
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-tertiary: #9ca3af;
+  --btn-hover: #f3f4f6;
+  --divider: #e5e7eb;
+  --tooltip-bg: #ffffff;
+  --grid-line: #e5e7eb;
+}
+
+[data-theme='dark'] {
+  /* Keep Background Fixed */
+  --background: #f8faf9;
+  --foreground: #333333;
+
+  /* Dark Theme Colors */
+  --card-bg: #2c392f;
+  --card-border: #4a5d4e;
+  --text-primary: #e2e8df;
+  --text-secondary: #a8b3a6;
+  --text-tertiary: #7d877b;
+  --btn-hover: #364940;
+  --divider: #4a5d4e;
+  --tooltip-bg: #1c2922;
+  --grid-line: #4a5d4e;
+}
+
+.theme-transition {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease, fill 0.3s ease;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
   min-height: 100vh;
+}
+
+/* Theme-aware component styles */
+.theme-card {
+  background-color: var(--card-bg);
+  border-color: var(--card-border);
+  color: var(--text-primary);
+}
+
+.theme-text-primary {
+  color: var(--text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--text-secondary);
+}
+
+.theme-text-tertiary {
+  color: var(--text-tertiary);
+}
+
+.theme-border {
+  border-color: var(--card-border);
+}
+
+.theme-divider {
+  background-color: var(--divider);
+}
+
+.theme-hover:hover {
+  background-color: var(--btn-hover);
 }

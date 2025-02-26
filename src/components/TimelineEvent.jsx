@@ -1,5 +1,7 @@
 'use client';
 
+import { useTheme } from '@/components/ThemeProvider';
+
 export const TimelineEvent = ({
   time,
   metric,
@@ -8,6 +10,8 @@ export const TimelineEvent = ({
   unit,
   plantValue,
 }) => {
+  const { theme } = useTheme();
+
   const getDelta = () => {
     const delta = currentValue - previousValue;
     return {
@@ -36,10 +40,10 @@ export const TimelineEvent = ({
   const plantComparison = getPlantComparison();
 
   return (
-    <div className="flex items-center justify-between py-3 border-b border-[#4a5d4e] last:border-0">
+    <div className="flex items-center justify-between py-3 border-b theme-border last:border-0">
       <div className="flex items-center gap-3">
-        <span className="text-sm text-[#a8b3a6]">{time}</span>
-        <span className="font-medium text-[#e2e8df]">{metric}</span>
+        <span className="text-sm theme-text-tertiary">{time}</span>
+        <span className="font-medium theme-text-primary">{metric}</span>
       </div>
       <div className="flex items-center gap-4">
         {/* Current vs previous value */}
@@ -54,8 +58,10 @@ export const TimelineEvent = ({
             className={`text-xs px-2 py-0.5 rounded-full ${
               plantComparison.significant
                 ? plantComparison.above
-                  ? 'bg-[#9e5548]/30 text-[#d4846f]'
-                  : 'bg-[#5c8f57]/30 text-[#7fa37a]'
+                  ? 'bg-[#9e5548]/20 text-[#d4846f]'
+                  : 'bg-[#5c8f57]/20 text-[#7fa37a]'
+                : theme === 'light'
+                ? 'bg-gray-100 text-gray-600'
                 : 'bg-[#4a5d4e]/30 text-[#a8b3a6]'
             }`}
           >

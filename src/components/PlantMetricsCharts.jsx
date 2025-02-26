@@ -9,11 +9,13 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Thermometer, Droplets, Sun } from 'lucide-react';
+import { useTheme } from '@/components/ThemeProvider';
 
 const PlantMetricsCharts = ({ plantId, spaceId }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,8 +44,8 @@ const PlantMetricsCharts = ({ plantId, spaceId }) => {
   const CustomTooltip = ({ active, payload, label, unit, color }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-[#2c392f] p-2 rounded-md border border-[#4a5d4e] shadow-lg text-xs">
-          <p className="text-[#e2e8df] font-medium">{`Hour: ${label}`}</p>
+        <div className="theme-card p-2 rounded-md border shadow-lg text-xs">
+          <p className="theme-text-primary font-medium">{`Hour: ${label}`}</p>
           <p style={{ color: color }}>
             {`${payload[0].value.toFixed(1)} ${unit}`}
           </p>
@@ -90,9 +92,9 @@ const PlantMetricsCharts = ({ plantId, spaceId }) => {
         {charts.map((chart, index) => (
           <div
             key={index}
-            className="bg-[#2c392f] rounded-2xl border border-[#4a5d4e] p-6 flex justify-center items-center h-48"
+            className="theme-card rounded-2xl shadow-sm p-6 flex justify-center items-center h-48"
           >
-            <div className="animate-pulse text-[#a8b3a6] text-sm">
+            <div className="animate-pulse theme-text-tertiary text-sm">
               Loading {chart.title.toLowerCase()} data...
             </div>
           </div>
@@ -107,7 +109,7 @@ const PlantMetricsCharts = ({ plantId, spaceId }) => {
         {charts.map((chart, index) => (
           <div
             key={index}
-            className="bg-[#2c392f] rounded-2xl border border-[#4a5d4e] p-6 flex justify-center items-center h-48"
+            className="theme-card rounded-2xl shadow-sm p-6 flex justify-center items-center h-48"
           >
             <div className="text-[#d4846f] text-sm">Error loading data</div>
           </div>
@@ -122,9 +124,9 @@ const PlantMetricsCharts = ({ plantId, spaceId }) => {
         {charts.map((chart, index) => (
           <div
             key={index}
-            className="bg-[#2c392f] rounded-2xl border border-[#4a5d4e] p-6 flex justify-center items-center h-48"
+            className="theme-card rounded-2xl shadow-sm p-6 flex justify-center items-center h-48"
           >
-            <div className="text-[#a8b3a6] text-sm">
+            <div className="theme-text-tertiary text-sm">
               No history data available
             </div>
           </div>
@@ -138,7 +140,7 @@ const PlantMetricsCharts = ({ plantId, spaceId }) => {
       {charts.map((chart, index) => (
         <div
           key={index}
-          className="bg-[#2c392f] rounded-2xl border border-[#4a5d4e] p-6 relative"
+          className="theme-card rounded-2xl shadow-sm p-6 relative"
         >
           <div className="absolute top-4 right-4">
             <chart.icon
@@ -148,7 +150,7 @@ const PlantMetricsCharts = ({ plantId, spaceId }) => {
           </div>
 
           <div className="flex flex-col space-y-2 mb-2">
-            <span className="text-sm font-medium text-[#a8b3a6]">
+            <span className="text-sm font-medium theme-text-secondary">
               {chart.title} History
             </span>
             <div className="flex items-baseline gap-2">
@@ -168,28 +170,30 @@ const PlantMetricsCharts = ({ plantId, spaceId }) => {
               >
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="#4a5d4e"
-                  opacity={0.3}
+                  stroke="var(--grid-line)"
+                  opacity={theme === 'light' ? 0.8 : 0.3}
                 />
                 <XAxis
                   dataKey="hour"
-                  stroke="#a8b3a6"
+                  stroke="var(--text-tertiary)"
                   tick={{ fontSize: 10 }}
                   tickCount={6}
-                  opacity={0.5}
                 />
                 <YAxis
-                  stroke="#a8b3a6"
+                  stroke="var(--text-tertiary)"
                   domain={chart.domain}
                   tick={{ fontSize: 10 }}
                   tickCount={5}
-                  opacity={0.5}
                 />
                 <Tooltip
                   content={
                     <CustomTooltip unit={chart.unit} color={chart.color} />
                   }
-                  cursor={{ stroke: '#a8b3a6', strokeWidth: 1, opacity: 0.3 }}
+                  cursor={{
+                    stroke: 'var(--text-tertiary)',
+                    strokeWidth: 1,
+                    opacity: 0.3,
+                  }}
                 />
                 <Line
                   type="monotone"
