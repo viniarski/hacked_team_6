@@ -60,7 +60,7 @@ const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
       </button>
 
       {isOpen && plants && plants.length > 0 && (
-        <div className="absolute top-full right-0 mt-2 w-64 py-2 rounded-xl theme-card shadow-xl z-30">
+        <div className="absolute top-full right-0 mt-2 w-64 py-2 rounded-xl theme-card shadow-xl z-30 border border-gray-300">
           {plants.map((plant) => (
             <button
               key={plant.id}
@@ -73,11 +73,6 @@ const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
               <span className="theme-text-primary">
                 {plant.name || `Plant #${plant.id}`}
               </span>
-              {plant.api_id && (
-                <span className="text-sm text-[#7fa37a]">
-                  ID: {plant.api_id}
-                </span>
-              )}
             </button>
           ))}
         </div>
