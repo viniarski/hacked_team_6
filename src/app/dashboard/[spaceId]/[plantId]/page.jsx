@@ -12,7 +12,7 @@ import {
   Clock,
   Calendar,
   ArrowLeft,
-  AlertTriangle
+  AlertTriangle,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth, UserButton } from '@clerk/nextjs';
@@ -66,8 +66,14 @@ const PlantSelector = ({ selectedPlant, plants, onSelect }) => {
               }}
               className="w-full px-4 py-2 text-left hover:bg-[#364940] transition-colors flex flex-col"
             >
-              <span className="text-[#e2e8df]">{plant.name || `Plant #${plant.id}`}</span>
-              {plant.api_id && <span className="text-sm text-[#7fa37a]">ID: {plant.api_id}</span>}
+              <span className="text-[#e2e8df]">
+                {plant.name || `Plant #${plant.id}`}
+              </span>
+              {plant.api_id && (
+                <span className="text-sm text-[#7fa37a]">
+                  ID: {plant.api_id}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -82,7 +88,7 @@ export default function DashboardPage({ params }) {
   const unwrappedParams = use(params);
   const spaceId = unwrappedParams?.spaceId;
   const plantId = unwrappedParams?.plantId;
-  
+
   // Initialize all state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -96,12 +102,14 @@ export default function DashboardPage({ params }) {
   const fetchData = async (spaceId, plantId) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/plants?spaceId=${spaceId}&plantId=${plantId}`);
+      const response = await fetch(
+        `/api/plants?spaceId=${spaceId}&plantId=${plantId}`
+      );
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
       const data = await response.json();
-      console.log("Fetched data:", data);
+      console.log('Fetched data:', data);
       setDebugInfo(data); // Store for debugging
       return data;
     } catch (error) {
@@ -116,49 +124,49 @@ export default function DashboardPage({ params }) {
   // Update metrics based on current data
   const updateMetrics = (currentData, plantDetails) => {
     if (!currentData) return [];
-    
+
     // Get plant's ideal temperature
     const plantTemp = plantDetails?.temperature;
-    
+
     // Get plant's ideal brightness - no need to scale, it's already in LUX
     const plantBrightness = plantDetails?.brightness;
-    
+
     // Define optimal ranges
-    const tempOptimal = plantTemp 
+    const tempOptimal = plantTemp
       ? { min: plantTemp - 2, max: plantTemp + 2 }
       : { min: 20, max: 25 };
-    
-    const tempWarning = { 
-      min: tempOptimal.min - 3, 
-      max: tempOptimal.max + 3 
+
+    const tempWarning = {
+      min: tempOptimal.min - 3,
+      max: tempOptimal.max + 3,
     };
-    
-    const tempCritical = { 
-      min: tempOptimal.min - 5, 
-      max: tempOptimal.max + 5 
+
+    const tempCritical = {
+      min: tempOptimal.min - 5,
+      max: tempOptimal.max + 5,
     };
-    
+
     const humidityOptimal = { min: 60, max: 80 };
     const humidityWarning = { min: 50, max: 90 };
     const humidityCritical = { min: 40, max: 95 };
-    
+
     // Scale up the brightness from Raspberry Pi to lux
     // Based on your chart: 44 from Pi ≈ 300-500 lux in a bright office
     const sensorBrightValue = currentData.brightness * 10; // Scale factor of 10 (44 → 440 lux)
-    
+
     // For brightness, define optimal ranges in lux
     const brightnessOptimal = plantBrightness
       ? { min: Math.max(0, plantBrightness * 0.9), max: plantBrightness * 1.1 }
       : { min: 400, max: 600 }; // Default for a bright office if plant value not available
-    
+
     const brightnessWarning = {
       min: Math.max(0, brightnessOptimal.min * 0.8),
-      max: brightnessOptimal.max * 1.2
+      max: brightnessOptimal.max * 1.2,
     };
-    
+
     const brightnessCritical = {
       min: Math.max(0, brightnessOptimal.min * 0.6),
-      max: brightnessOptimal.max * 1.4
+      max: brightnessOptimal.max * 1.4,
     };
 
     return [
@@ -209,13 +217,13 @@ export default function DashboardPage({ params }) {
 
   // Generate timeline events
   const generateTimelineEvents = (metrics) => {
-    return metrics.map(metric => ({
+    return metrics.map((metric) => ({
       time: metric.time,
       metric: metric.title,
       previousValue: metric.previousValue,
       currentValue: metric.value,
       unit: metric.unit,
-      plantValue: metric.plantValue
+      plantValue: metric.plantValue,
     }));
   };
 
@@ -235,10 +243,10 @@ export default function DashboardPage({ params }) {
 
     if (isLoaded && userId && spaceId) {
       // Fetch data
-      fetchData(spaceId, plantId).then(data => {
+      fetchData(spaceId, plantId).then((data) => {
         if (data) {
           setPlantData(data);
-          
+
           // Set selected plant
           if (data.plant) {
             setSelectedPlant(data.plant);
@@ -249,7 +257,7 @@ export default function DashboardPage({ params }) {
               router.push(`/dashboard/${spaceId}/${data.plants[0].id}`);
             }
           }
-          
+
           // Set metrics based on fetched data
           if (data.currentData) {
             const updatedMetrics = updateMetrics(data.currentData, data.plant);
@@ -317,7 +325,6 @@ export default function DashboardPage({ params }) {
           </Link>
 
           <UserButton
-            afterSignOutUrl="/"
             appearance={{
               elements: {
                 userButtonAvatarBox: {
@@ -346,9 +353,9 @@ export default function DashboardPage({ params }) {
             <div className="flex flex-row items-center gap-4">
               <div className="relative w-16 h-16 bg-[#7fa37a]/30 rounded-full overflow-hidden flex items-center justify-center">
                 {selectedPlant?.image_url ? (
-                  <img 
-                    src={selectedPlant.image_url} 
-                    alt={selectedPlant.name || "Plant"} 
+                  <img
+                    src={selectedPlant.image_url}
+                    alt={selectedPlant.name || 'Plant'}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 ) : (
@@ -357,7 +364,7 @@ export default function DashboardPage({ params }) {
               </div>
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-[#e2e8df]">
-                  {selectedPlant?.name || 'Plant'} Monitor
+                  {selectedPlant?.name || 'Plant'}
                 </h1>
                 <div className="flex items-center gap-2 mt-1">
                   <Clock className="h-4 w-4 text-[#a8b3a6]" />
@@ -418,10 +425,13 @@ export default function DashboardPage({ params }) {
         ) : (
           <div className="bg-[#2c392f] rounded-2xl border border-[#4a5d4e] p-8 text-center">
             <Leaf className="h-16 w-16 text-[#7fa37a]/40 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-[#e2e8df] mb-2">No Sensor Data Available</h2>
+            <h2 className="text-xl font-semibold text-[#e2e8df] mb-2">
+              No Sensor Data Available
+            </h2>
             <p className="text-[#a8b3a6] max-w-md mx-auto">
-              We're waiting for your Raspberry Pi to send us some data about your plant's environment.
-              Make sure your sensors are connected and running.
+              We're waiting for your Raspberry Pi to send us some data about
+              your plant's environment. Make sure your sensors are connected and
+              running.
             </p>
           </div>
         )}
