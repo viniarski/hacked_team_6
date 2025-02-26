@@ -110,10 +110,6 @@ export default function WelcomePage() {
                 <ChevronRight className="ml-2 h-5 w-5" />
               </Link>
             </div>
-
-            <div className="mt-4 text-sm text-gray-500">
-              Start your 14-day free trial. No credit card required.
-            </div>
           </div>
 
           <div className="md:w-1/2 flex justify-center md:justify-end">
