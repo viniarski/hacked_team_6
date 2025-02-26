@@ -20,7 +20,7 @@ import { MetricCard } from '@/app/dashboard/MetricCard';
 import { StatusOverview } from '@/app/dashboard/StatusOverview';
 import { TimelineEvent } from '@/components/TimelineEvent';
 import PlantMetricsCharts from '@/components/PlantMetricsCharts';
-import { motion } from "motion/react"
+import { motion } from "motion/react";
 
 // TimeDisplay component
 const TimeDisplay = () => {
