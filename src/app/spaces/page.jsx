@@ -15,6 +15,7 @@ import {
 import Link from 'next/link';
 import { useAuth, UserButton } from '@clerk/nextjs';
 import CheckUser from '@/components/checkUser';
+import { motion } from "motion/react";
 
 const KitchenIcon = () => <Utensils className="h-10 w-10" />;
 const BedroomIcon = () => <Home className="h-10 w-10" />;
@@ -145,6 +146,13 @@ export default function SpacesPage() {
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-[#f8faf9] flex items-center justify-center">
+        <motion.div             
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.4,
+              scale: { type: "spring", visualDuration: 0.6, bounce: 0.5 },
+          }}>
         <Image
           src="/logo_flaura.webp"
           alt="Flaura Logo"
@@ -152,6 +160,7 @@ export default function SpacesPage() {
           height={64}
           className="h-16 w-auto"
         />
+      </motion.div>
       </div>
     );
   }
